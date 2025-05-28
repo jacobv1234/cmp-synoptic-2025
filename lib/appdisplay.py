@@ -18,7 +18,7 @@ class AppDisplay:
         textExample.set(getDBTestData)
 
         self.label = Label(self.window, textvariable=textExample, anchor=CENTER, height=3, width=30, bd=3, padx=15, pady=15, justify=CENTER, relief=RAISED, underline=0, wraplength=250)
-        self.label.pack(pady=20)
+        self.label.place(relx = 0.5, rely=0.5, anchor = CENTER)
 
 
 
