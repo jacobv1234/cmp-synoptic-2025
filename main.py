@@ -5,7 +5,6 @@ from time import sleep, perf_counter
 from lib.appdisplay import AppDisplay
 
 
-
 screen = AppDisplay()
 
 while screen.running:
@@ -18,3 +17,7 @@ while screen.running:
     diff = end - start
     if diff < 0.017:
         sleep(0.017 - diff)
+    
+
+    
+

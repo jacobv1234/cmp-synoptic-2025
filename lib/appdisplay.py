@@ -1,5 +1,6 @@
 # class that contains all of the tkinter graphical stuff
 from tkinter import *
+from lib.databaseConnectionFront import displayDBData
 class AppDisplay:
     # initialiser function
     def __init__(self, width = 480, height = 720):
@@ -11,8 +12,19 @@ class AppDisplay:
 
         # Canvas allows for shapes/images to be drawn to the screen + handles user input
         self.c = Canvas(self.window, width=width, height=height, bg='white') 
+        
+        textExample = StringVar()
+        getDBTestData = str(displayDBData())
+        textExample.set(getDBTestData)
+
+        self.label = Label(self.window, textvariable=textExample, anchor=CENTER, height=3, width=30, bd=3, padx=15, pady=15, justify=CENTER, relief=RAISED, underline=0, wraplength=250)
+        self.label.pack(pady=20)
+
+
+
         self.c.pack()
 
+        
         self.running = True
     
     # run every frame
