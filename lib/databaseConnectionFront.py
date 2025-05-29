@@ -23,5 +23,5 @@ def displayDBData():
     cur.execute("SELECT * FROM testTable")
     rows = cur.fetchall()
     finalString = "\n".join(map(str, rows)) #Map turns each row to str and join a new line for each one
-    return finalString  
+    return finalString  #We then return the SELECTED rows to display
 
