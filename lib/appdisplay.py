@@ -27,23 +27,89 @@ class AppDisplay:
 
         self.draw_front_page()
 
+    
     def draw_front_page(self):
         self.clear_screen()
 
-        textExample = StringVar()
-        getDBTestData = str(displayDBData())
-        textExample.set(getDBTestData) #a text variable is used in tkinter to dsiplay text here we need to SET the variable
-
-        #Here we create the label for the text 
-        label = Label(self.window, textvariable=textExample, anchor=CENTER, height=3, width=30, bd=3, padx=15, pady=15, justify=CENTER, relief=RAISED, underline=0, wraplength=250)
-        label.place(relx = 0.5, rely=0.5, anchor = CENTER)
-        self.widgets.append(label)
-
-        img = Image.open('images/Enivronment App Logo.png')
-        imgSmallerResize = img.resize((360, 480))
+        # load the logo into self.images
+        img = Image.open('images/logo.png')
+        imgSmallerResize = img.resize((250,250))
         self.images['logo'] = ImageTk.PhotoImage(imgSmallerResize)
 
-        self.cobjects.append(self.c.create_image(250, 150, anchor=CENTER, image=self.images['logo']))
+        self.cobjects.extend([
+            self.c.create_image(self.width/2, 150, image = self.images['logo'], anchor = 'center'),
+            # labels for text entry
+            self.c.create_text(self.width/2, self.height/2, font='Arial 15', text='Email', anchor='center'),
+            self.c.create_text(self.width/2, self.height/2 +70, font='Arial 15', text='Password', anchor='center')
+        ])
+
+        # data entry points
+        # self.widgets[0] = email / name / whatever we settle on
+        # self.widgets[1] = password
+        # use .get() on the above for the values entered
+        self.widgets.extend([
+            Entry(self.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb'),
+            Entry(self.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF')
+        ])
+        self.widgets[0].place(x=self.width/2, y=(self.height/2)+30, anchor='center', width=int(self.width*2/3), height=40)
+        self.widgets[1].place(x=self.width/2, y=(self.height/2)+100, anchor='center', width=int(self.width*2/3), height=40)
+
+
+        # buttons
+        # self.widgets[2] = log in
+        # self.widgets[3] = go to register
+        self.widgets.extend([
+            Button(self.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
+                    activebackground="#226D22", activeforeground='white',
+                    text='Log In Now \u2192', command = self.log_in_pressed),
+
+            Button(self.window, font='Arial 10', justify='center', background="#bbbbbb",
+                   text='Register', command = self.draw_register_page)
+        ])
+        self.widgets[2].place(x=self.width/2, y=(self.height/2)+170, anchor='center', width=int(self.width*2/3), height=40)
+        self.widgets[3].place(x=self.width/2, y=self.height-40, anchor='center', width=int(self.width/2), height=30)
+
+
+    def draw_register_page(self):
+        self.clear_screen()
+
+        self.cobjects.extend([
+            self.c.create_image(self.width/2, 150, image = self.images['logo'], anchor = 'center'),
+            # labels for text entry
+            self.c.create_text(self.width/2, self.height/2, font='Arial 15', text='Email', anchor='center'),
+            self.c.create_text(self.width/2, self.height/2 +70, font='Arial 15', text='Password', anchor='center'),
+            self.c.create_text(self.width/2, self.height/2 +140, font='Arial 15', text='Confirm Password', anchor='center')
+        ])
+
+        # data entry points
+        # self.widgets[0] = email / name / whatever we settle on
+        # self.widgets[1] = password
+        # self.widgets[2] = confirm password
+        # use .get() on the above for the values entered
+        self.widgets.extend([
+            Entry(self.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb'),
+            Entry(self.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF'),
+            Entry(self.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF')
+        ])
+        self.widgets[0].place(x=self.width/2, y=(self.height/2)+30, anchor='center', width=int(self.width*2/3), height=40)
+        self.widgets[1].place(x=self.width/2, y=(self.height/2)+100, anchor='center', width=int(self.width*2/3), height=40)
+        self.widgets[2].place(x=self.width/2, y=(self.height/2)+170, anchor='center', width=int(self.width*2/3), height=40)
+
+
+        # buttons
+        # self.widgets[3] = register
+        # self.widgets[4] = go to log in
+        self.widgets.extend([
+            Button(self.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
+                    activebackground="#226D22", activeforeground='white',
+                    text='Register \u2192', command=self.register_pressed),
+
+            Button(self.window, font='Arial 10', justify='center', background="#bbbbbb",
+                   text='Log In Instead', command=self.draw_front_page)
+        ])
+        self.widgets[3].place(x=self.width/2, y=(self.height/2)+240, anchor='center', width=int(self.width*2/3), height=40)
+        self.widgets[4].place(x=self.width/2, y=self.height-40, anchor='center', width=int(self.width/2), height=30)
+
 
     def clear_screen(self):
         for object in self.cobjects:
@@ -52,12 +118,21 @@ class AppDisplay:
             widget.destroy()
         self.cobjects = []
         self.widgets = []
+    
+
+    # button functions
+    def log_in_pressed(self):
+        pass
+
+    def register_pressed(self):
+        pass
 
 
     # run every frame
     def update(self):
         self.window.update()
     
+    # handle exiting the mainloop - bound to X button
     def close(self):
         self.running = False
 
