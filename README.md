@@ -1,1 +1,1 @@
-# cmp-synpotic-2025
+# cmp-synoptic-2025
