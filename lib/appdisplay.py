@@ -76,39 +76,43 @@ class AppDisplay:
         self.cobjects.extend([
             self.c.create_image(self.width/2, 150, image = self.images['logo'], anchor = 'center'),
             # labels for text entry
-            self.c.create_text(self.width/2, self.height/2, font='Arial 15', text='Email', anchor='center'),
-            self.c.create_text(self.width/2, self.height/2 +70, font='Arial 15', text='Password', anchor='center'),
-            self.c.create_text(self.width/2, self.height/2 +140, font='Arial 15', text='Confirm Password', anchor='center')
+            self.c.create_text(self.width/2, self.height/2, font='Arial 10', text='Name', anchor='n'),
+            self.c.create_text(self.width/2, self.height/2 +50, font='Arial 10', text='Email', anchor='n'),
+            self.c.create_text(self.width/2, self.height/2 +100, font='Arial 10', text='Password', anchor='n'),
+            self.c.create_text(self.width/2, self.height/2 +150, font='Arial 10', text='Confirm Password', anchor='n')
         ])
 
         # data entry points
-        # self.widgets[0] = email / name / whatever we settle on
-        # self.widgets[1] = password
-        # self.widgets[2] = confirm password
+        # self.widgets[0] = name
+        # self.widgets[1] = email
+        # self.widgets[2] = password
+        # self.widgets[3] = confirm password
         # use .get() on the above for the values entered
         self.widgets.extend([
-            Entry(self.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb'),
-            Entry(self.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF'),
-            Entry(self.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF')
+            Entry(self.window, font='Arial 15', justify='center', borderwidth=5, background='#bbbbbb'),
+            Entry(self.window, font='Arial 15', justify='center', borderwidth=5, background='#bbbbbb'),
+            Entry(self.window, font='Arial 15', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF'),
+            Entry(self.window, font='Arial 15', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF')
         ])
-        self.widgets[0].place(x=self.width/2, y=(self.height/2)+30, anchor='center', width=int(self.width*2/3), height=40)
-        self.widgets[1].place(x=self.width/2, y=(self.height/2)+100, anchor='center', width=int(self.width*2/3), height=40)
-        self.widgets[2].place(x=self.width/2, y=(self.height/2)+170, anchor='center', width=int(self.width*2/3), height=40)
+        self.widgets[0].place(x=self.width/2, y=(self.height/2)+30, anchor='center', width=int(self.width*2/3), height=35)
+        self.widgets[1].place(x=self.width/2, y=(self.height/2)+80, anchor='center', width=int(self.width*2/3), height=35)
+        self.widgets[2].place(x=self.width/2, y=(self.height/2)+130, anchor='center', width=int(self.width*2/3), height=35)
+        self.widgets[3].place(x=self.width/2, y=(self.height/2)+180, anchor='center', width=int(self.width*2/3), height=35)
 
 
         # buttons
-        # self.widgets[3] = register
-        # self.widgets[4] = go to log in
+        # self.widgets[4] = register
+        # self.widgets[5] = go to log in
         self.widgets.extend([
             Button(self.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
                     activebackground="#226D22", activeforeground='white',
                     text='Register \u2192', command=self.register_pressed),
 
             Button(self.window, font='Arial 10', justify='center', background="#bbbbbb",
-                   text='Log In Instead', command=self.draw_front_page)
+                   text='Log In', command=self.draw_front_page)
         ])
-        self.widgets[3].place(x=self.width/2, y=(self.height/2)+240, anchor='center', width=int(self.width*2/3), height=40)
-        self.widgets[4].place(x=self.width/2, y=self.height-40, anchor='center', width=int(self.width/2), height=30)
+        self.widgets[4].place(x=self.width/2, y=(self.height/2)+230, anchor='center', width=int(self.width*2/3), height=40)
+        self.widgets[5].place(x=self.width/2, y=self.height-40, anchor='center', width=int(self.width/2), height=30)
 
 
     def clear_screen(self):
