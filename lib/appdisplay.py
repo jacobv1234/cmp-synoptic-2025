@@ -36,6 +36,10 @@ class AppDisplay:
         imgSmallerResize = img.resize((250,250))
         self.images['logo'] = ImageTk.PhotoImage(imgSmallerResize)
 
+        #bg = PhotoImage(file = "images/southafricanbuilding.jpg")
+        #mainBG = Label(self.window, image = bg)
+        #Place image on canvas 
+
         self.cobjects.extend([
             self.c.create_image(self.width/2, 150, image = self.images['logo'], anchor = 'center'),
             # labels for text entry
@@ -129,7 +133,8 @@ class AppDisplay:
         pass
 
     def register_pressed(self):
-        pass
+        value = self.widgets[0].get()
+        print(value)
 
 
     # run every frame
