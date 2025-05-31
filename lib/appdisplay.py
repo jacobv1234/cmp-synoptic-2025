@@ -87,13 +87,8 @@ class AppDisplay:
 
        
     def open_map(self):
-        # Remove all widgets and canvas from the window
+        # Remove all widgets from the window
         self.clear_screen()
-        
-        # Destroy the canvas if it exists
-        if hasattr(self, 'c'):
-            self.c.destroy()
-            del self.c  # Remove the attribute to avoid reuse
 
         # Create and pack the map widget directly in the main window
         self.map_widget = tkintermapview.TkinterMapView(
@@ -102,12 +97,53 @@ class AppDisplay:
             height=self.height,
             corner_radius=0
         )
+
+        # Place the map widget to fill the entire window
         self.map_widget.place(relx=0, rely=0, relwidth=1, relheight=1)
         
         # Configure map settings
         self.map_widget.set_position(51.5074, -0.1278)
         self.map_widget.set_zoom(13)
         self.map_widget.set_marker(51.5074, -0.1278, text="London")
+
+        # Create the bottom bar
+        bottom_bar_height = 0.1 * self.height  # 10% of the height
+        bottom_bar = Label(
+            self.window,
+            bg="white",
+            anchor='sw',
+        )
+
+        # Place the bar at the bottom
+        bottom_bar.place(
+            relx=0,
+            rely=1,
+            anchor='sw',
+            relwidth=1,
+            height=bottom_bar_height
+        )
+        self.widgets.append(bottom_bar)
+
+        # Create the back button
+        back_button = Button(
+            self.window,
+            text="  Back  ",
+            bg="white",
+            fg="#444444",
+            anchor="w",
+            relief="flat",
+            command=self.return_to_front_page
+        )
+
+        # Place the button
+        back_button.place(
+            relx=0,
+            rely=1.0,
+            anchor='sw',
+            width=100,
+            height=bottom_bar_height
+        )
+        self.widgets.append(back_button)
 
 
 
@@ -155,6 +191,15 @@ class AppDisplay:
         self.widgets[4].place(x=self.width/2, y=(self.height/2)+230, anchor='center', width=int(self.width*2/3), height=40)
         self.widgets[5].place(x=self.width/2, y=self.height-40, anchor='center', width=int(self.width/2), height=30)
 
+    def return_to_front_page(self):
+        self.clear_screen()
+
+        # Remove the map widget if it exists
+        if hasattr(self, 'map_widget'):
+            self.map_widget.destroy()
+
+        # Recreate the front page
+        self.draw_front_page()
 
     def clear_screen(self):
         for object in self.cobjects:
@@ -164,7 +209,6 @@ class AppDisplay:
         self.cobjects = []
         self.widgets = []
     
-
     # button functions
     def log_in_pressed(self):
         pass
