@@ -1,7 +1,8 @@
 # class that contains all of the tkinter graphical stuff
 from tkinter import *
+
 from PIL import Image, ImageTk
-from lib.databaseConnectionFront import displayDBData
+from lib.databaseConnectionFront import registerUser, logInUser
 class AppDisplay:
     # initialiser function
     def __init__(self, width = 480, height = 720):
@@ -130,11 +131,38 @@ class AppDisplay:
 
     # button functions
     def log_in_pressed(self):
-        pass
+        valueList = []
+        print(len(self.widgets))
+        for i in range(0, len(self.widgets)):
+            if isinstance(self.widgets[i], Entry):
+                valueList.append(self.widgets[i].get())
+        
+        checkLoginDetails = logInUser(valueList)
+        if checkLoginDetails:
+            print("sucessfully logged in!")
+        else:
+            print("error logging in...")
+
 
     def register_pressed(self):
-        value = self.widgets[0].get()
-        print(value)
+        print (type(self.widgets[0]))
+        valueList = []
+        print(len(self.widgets))
+        for i in range(0, len(self.widgets)):
+            if isinstance(self.widgets[i], Entry):
+                valueList.append(self.widgets[i].get())
+        print(valueList)
+
+        inputUserData = registerUser(valueList)
+        if inputUserData:
+            print("User successfully registered!")
+        else:
+            print("user registration error/failed")
+        
+        
+
+
+        
 
 
     # run every frame

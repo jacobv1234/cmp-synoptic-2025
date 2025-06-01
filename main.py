@@ -4,12 +4,13 @@ try:
     import mariadb as mariadb
     import pytest as pytest
     import nuitka as nuitka
+
 except ModuleNotFoundError:
     # automatically install modules
     from os import system
     install = input('Important modules are not installed. Install? (y/n) ')
     if install.lower() == 'y':
-        system('python -m pip install pillow mariadb pytest nuitka')
+        system('python -m pip install pillow mariadb pytest nuitka bcrypt ')
         exit()
 
 # global imports
