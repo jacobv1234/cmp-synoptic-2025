@@ -42,8 +42,11 @@ class AppDisplay:
 
         # load the logo into self.images
         img = Image.open('images/logo.png')
-        imgSmallerResize = img.resize((250,250))
+        titleImg = Image.open('images/Enivronment App Logo.png')
+        imgSmallerResize = img.resize((550,550))
+        titleImgSmallerResize = titleImg.resize((450,450))
         self.images['logo'] = ImageTk.PhotoImage(imgSmallerResize)
+        self.images['title'] = ImageTk.PhotoImage(titleImgSmallerResize)
 
         # bg = PhotoImage(file = "images/southafricanbuilding.jpg")
         # mainBG = Label(self.window, image = bg)
@@ -51,6 +54,7 @@ class AppDisplay:
 
         self.cobjects.extend([
             self.c.create_image(self.width/2, 150, image = self.images['logo'], anchor = 'center'),
+            self.c.create_image((self.width/2)-10, 160, image = self.images['title'], anchor = 'center'),
             # labels for text entry
             self.c.create_text(self.width/2, self.height/2, font='Arial 15', text='Username', anchor='center'),
             self.c.create_text(self.width/2, self.height/2 +70, font='Arial 15', text='Password', anchor='center')
