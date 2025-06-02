@@ -31,8 +31,10 @@ class AppDisplay:
         self.map_frame = Frame(self.window, width=self.width, height=self.height)
         self.running = True # used to control the main loop
 
+        # stores the username once logged in
+        self.username = ''
+
         self.draw_front_page()
-        self.window.mainloop()
 
     
     def draw_front_page(self):
@@ -50,12 +52,12 @@ class AppDisplay:
         self.cobjects.extend([
             self.c.create_image(self.width/2, 150, image = self.images['logo'], anchor = 'center'),
             # labels for text entry
-            self.c.create_text(self.width/2, self.height/2, font='Arial 15', text='Email', anchor='center'),
+            self.c.create_text(self.width/2, self.height/2, font='Arial 15', text='Username', anchor='center'),
             self.c.create_text(self.width/2, self.height/2 +70, font='Arial 15', text='Password', anchor='center')
         ])
 
         # data entry points
-        # self.widgets[0] = email / name / whatever we settle on
+        # self.widgets[0] = name
         # self.widgets[1] = password
         # use .get() on the above for the values entered
         self.widgets.extend([
@@ -75,16 +77,16 @@ class AppDisplay:
                     text='Log In Now \u2192', command = self.log_in_pressed),
 
             Button(self.window, font='Arial 10', justify='center', background="#bbbbbb",
-                   text='Register', command = self.draw_register_page),
+                   text='Register', command = self.draw_register_page)
 
             
-            Button(self.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
-                activebackground="#226D22", activeforeground='white',
-                text='Map', command=self.open_map),
+            #Button(self.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
+            #    activebackground="#226D22", activeforeground='white',
+            #    text='Map', command=self.open_map), # map button for testing
         ])
         self.widgets[2].place(x=self.width/2, y=(self.height/2)+170, anchor='center', width=int(self.width*2/3), height=40)
         self.widgets[3].place(x=self.width/2, y=self.height-40, anchor='center', width=int(self.width/2), height=30)
-        self.widgets[4].place(x=self.width/2, y=self.height-40, anchor='center', width=int(self.width/2), height=30)
+        #self.widgets[4].place(x=self.width/2, y=self.height-40, anchor='center', width=int(self.width/2), height=30)
 
        
     def open_map(self):
@@ -154,7 +156,7 @@ class AppDisplay:
         self.cobjects.extend([
             self.c.create_image(self.width/2, 150, image = self.images['logo'], anchor = 'center'),
             # labels for text entry
-            self.c.create_text(self.width/2, self.height/2, font='Arial 10', text='Name', anchor='n'),
+            self.c.create_text(self.width/2, self.height/2, font='Arial 10', text='Username', anchor='n'),
             self.c.create_text(self.width/2, self.height/2 +50, font='Arial 10', text='Email', anchor='n'),
             self.c.create_text(self.width/2, self.height/2 +100, font='Arial 10', text='Password', anchor='n'),
             self.c.create_text(self.width/2, self.height/2 +150, font='Arial 10', text='Confirm Password', anchor='n')
@@ -221,8 +223,16 @@ class AppDisplay:
         checkLoginDetails = logInUser(valueList)
         if checkLoginDetails:
             print("sucessfully logged in!")
+            # take the user to the map
+            self.username = valueList[0]
+            self.open_map()
         else:
             print("error logging in...")
+
+            # display an error message
+            self.cobjects.append(
+                self.c.create_text(self.width/2, (self.height/2)+240, fill='red', font='Arial 12', text='The email or password is incorrect.', anchor='n')
+            )
 
 
     def register_pressed(self):
@@ -237,8 +247,16 @@ class AppDisplay:
         inputUserData = registerUser(valueList)
         if inputUserData:
             print("User successfully registered!")
+            # take them to the login page with the username already input
+            self.draw_front_page()
+            self.widgets[0].insert(0, valueList[-1])
+
         else:
             print("user registration error/failed")
+            # display error message
+            self.cobjects.append(
+                self.c.create_text(self.width/2, (self.height/2)+280, fill='red', font='Arial 12', text='An error occurred.', anchor='n')
+            )
         
         
 

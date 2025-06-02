@@ -16,22 +16,26 @@ except ModuleNotFoundError:
         exit()
 
 # global imports
-from time import sleep, perf_counter
+#from time import sleep, perf_counter
 
 # local imports
 from lib.appdisplay import AppDisplay
 
 
 screen = AppDisplay()
+screen.window.mainloop() # run
 
-while screen.running:
-    start = perf_counter()
 
-    screen.update()
+# Alt main loop - scrapped due to not working with the map
 
-    # lock to roughly 60fps
-    end = perf_counter()
-    difference = end - start
-    if difference < 0.017:
-        sleep(0.017 - difference)
+#while screen.running:
+#    start = perf_counter()
+#
+#    screen.update()
+#
+#    # lock to roughly 60fps
+#    end = perf_counter()
+#    difference = end - start
+#    if difference < 0.017:
+#        sleep(0.017 - difference)
     

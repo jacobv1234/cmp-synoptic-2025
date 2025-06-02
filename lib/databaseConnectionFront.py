@@ -17,10 +17,11 @@ except mariadb.Error as e:
     print(f"Error connecting to MariaDB Platform: {e}")
     sys.exit(1)
 
-# Get Cursor
-cur = conn.cursor()
+
 
 def displayDBData():
+    # Get Cursor
+    cur = conn.cursor()
     cur.execute("SELECT * FROM testTable")
     rows = cur.fetchall()
     finalString = "\n".join(map(str, rows)) #Map turns each row to str and join a new line for each one
@@ -37,6 +38,8 @@ def verify(username, password):
     dbEncryptPWGet = "SELECT password FROM User WHERE username = %s"
     print (type(dbEncryptPWGet))
     print(type(userData[0]))
+    # Get Cursor
+    cur = conn.cursor()
     cur.execute(dbEncryptPWGet, userData)
     getEncryptedPassword = cur.fetchone()
     print(dbEncryptPWGet)
@@ -46,6 +49,8 @@ def verify(username, password):
 
 
 def registerUser(regData):
+    # Get Cursor
+    cur = conn.cursor()
     try:
         regData = (regData[0], regData[1], encrypter(regData[2]), None)
         dbRegInsert = "INSERT INTO User (username, email, password, userPic) VALUES (%s, %s, %s, %s)"
@@ -61,6 +66,8 @@ def registerUser(regData):
         cur.close()
 
 def logInUser(loginData):
+    # Get Cursor
+    cur = conn.cursor()
     try:
         print("here")
         loginCheck = verify(loginData[0], loginData[1])
