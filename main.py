@@ -29,10 +29,7 @@ while screen.running:
 
     # lock to roughly 60fps
     end = perf_counter()
-    diff = end - start
-    if diff < 0.017:
-        sleep(0.017 - diff)
+    difference = end - start
+    if difference < 0.017:
+        sleep(0.017 - difference)
     
-
-    
-
