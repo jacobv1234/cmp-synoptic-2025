@@ -132,3 +132,26 @@ def test_open_shopping_page(display, mocker):
     display.open_shopping_page()
     # Assert draw_shopping_page called
     mock_shopping_page.assert_called_once_with(display)
+
+def test_return_to_front_page(display, mocker):
+    # Patch mock draw_front_page
+    mock_front_page = mocker.patch.object(display, "draw_front_page")
+    # Clear screen mockers
+    mock_cobj = mocker.Mock()
+    mock_widget =  mocker.Mock()
+    display.cobjects = [mock_cobj]
+    display.widgets = [mock_widget]
+    # Map mockers
+    mocker_map = mocker.Mock()
+    display.map_widget = mocker_map
+
+    # Call open_shopping_page
+    display.return_to_front_page()
+
+    # Assert screen cleared
+    assert display.cobjects == []
+    assert display.widgets == []
+    # Assert map_widget destroy called
+    mocker_map.destroy.assert_called_once()
+    # Assert draw_shopping_page called
+    mock_front_page.assert_called_once()
