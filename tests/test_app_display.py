@@ -1,6 +1,5 @@
 import pytest
 from lib.appdisplay import AppDisplay
-import tkinter as tk
 
 @pytest.fixture
 # Fixture that mocks a tkinterface window.
@@ -55,31 +54,43 @@ def test_log_in_pressed(display, mocker):
     # asserts
     mocker_log_in.assert_called_once_with(["helloworld"])
 
+# Setter function for register_test, both for success and failures
+def setter_register_test(display, mocker, r):
+    # Mock entry
+    entry_mocker = mocker.Mock(spec=tk.Entry)
+    entry_mocker.get.return_value = "test@pleasework.com"
+    display.widgets = [entry_mocker]
 
+    # Set the return value of registration (true/false)
+    register_mocker = mocker.patch("lib.databaseConnectionFront.registerUser", return_value = r)
+    # Patch draw_front_page
+    front_page_mocker  = mocker.patch.object(display, "draw_front_page")
 
+    return entry_mocker, register_mocker, front_page_mocker
 
-class DummyWidget:
+# Intended behaviour: we register with "test@pleasework.com"
+#                     draw_front_page is called properly
+#                     a mock entry is created for "test@pleasework.com"
+def test_register_pressed_true(display, mocker):
+    # Call setter function
+    entry_mocker, register_mocker, front_page_mocker = setter_register_test(display, mocker, True)
+    
+    # Call register_pressed
+    display.register_pressed()
 
-    def __init__(self):
-        self.destroy_called = False
-    def destroy(self):
-        self.destroy_called = True
+    # Asserts
+    register_mocker.assert_called_once_with(["test@pleasework.com"])
+    front_page_mocker.assert_called_once()
+    entry_mocker.insert.assert_called_once_with(0, "test@pleasework.com")
 
-    def test_clear_screen():
-        from lib.appdisplay import AppDisplay
+# Intended behaviour: a mock error is created in display.cobjects
+def test_register_pressed_false(display, mocker):
+    entry_mocker, register_mocker, front_page_mocker = setter_register_test(display, mocker, False)
 
-        app_display = AppDisplay()
+    error_mocker = mocker.patch.object(display.c, "create_text", return_value = "mockError")
 
-        # Add dummy widgets with a destroy method
-        widget1 = DummyWidget()
-        widget2 = DummyWidget()
-        app_display.widgets.append(widget1)
-        app_display.cobjects.append(widget2)
+    # Call register_pressed
+    display.register_pressed()
 
-        app_display.clear_screen()
-
-        # Assert that .destroy() was called
-        assert widget1.destroy_called
-        assert widget2.destroy_called
-        assert len(app_display.cobjects) == 0
-        assert len(app_display.widgets) == 0
+    ## Assert
+    assert "mockError" in display.cobjects
