@@ -8,6 +8,7 @@ import tkintermapview
 import tkinter as tk
 import time
 from lib.map import open_map
+from lib.pages import draw_front_page, draw_register_page
 class AppDisplay:
     # initialiser function
     def __init__(self, width = 480, height = 720):
@@ -35,114 +36,11 @@ class AppDisplay:
         # stores the username once logged in
         self.username = ''
 
+        # Bind the page functions as methods
+        self.draw_front_page = lambda: draw_front_page(self)
+        self.draw_register_page = lambda: draw_register_page(self)
+
         self.draw_front_page()
-
-    
-    def draw_front_page(self):
-        self.clear_screen()
-
-        # load the logo into self.images
-        img = Image.open('images/logo.png')
-        titleImg = Image.open('images/Enivronment App Logo.png')
-        imgSmallerResize = img.resize((550,550))
-        titleImgSmallerResize = titleImg.resize((450,450))
-        self.images['logo'] = ImageTk.PhotoImage(imgSmallerResize)
-        self.images['title'] = ImageTk.PhotoImage(titleImgSmallerResize)
-
-        img = Image.open('images/southafricanbuilding.jpg')
-        # resize to the new height
-        imgResized = img.resize((self.height, int(img.width * (self.height/img.height))))
-        imgcropped = imgResized.crop((0,0,self.width,self.height))
-        self.images['bg'] = ImageTk.PhotoImage(imgcropped)
-
-        self.cobjects.extend([
-            self.c.create_image(0,0,image = self.images['bg'], anchor='nw'),
-            self.c.create_image(self.width/2, 150, image = self.images['logo'], anchor = 'center'),
-            self.c.create_image((self.width/2)-10, 160, image = self.images['title'], anchor = 'center'),
-            # labels for text entry
-            self.c.create_text(self.width/2, self.height/2, font='Arial 15', text='Username', anchor='center', fill='white'),
-            self.c.create_text(self.width/2, self.height/2 +70, font='Arial 15', text='Password', anchor='center', fill='white')
-        ])
-
-        # data entry points
-        # self.widgets[0] = name
-        # self.widgets[1] = password
-        # use .get() on the above for the values entered
-        self.widgets.extend([
-            Entry(self.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb'),
-            Entry(self.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF')
-        ])
-        self.widgets[0].place(x=self.width/2, y=(self.height/2)+30, anchor='center', width=int(self.width*2/3), height=40)
-        self.widgets[1].place(x=self.width/2, y=(self.height/2)+100, anchor='center', width=int(self.width*2/3), height=40)
-
-
-        # buttons
-        # self.widgets[2] = log in
-        # self.widgets[3] = go to register
-        self.widgets.extend([
-            Button(self.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
-                    activebackground="#226D22", activeforeground='white',
-                    text='Log In Now \u2192', command = self.log_in_pressed),
-
-            Button(self.window, font='Arial 10', justify='center', background="#bbbbbb",
-                   text='Register', command = self.draw_register_page)
-
-            
-            #Button(self.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
-            #    activebackground="#226D22", activeforeground='white',
-            #    text='Map', command=self.open_map), # map button for testing
-        ])
-        self.widgets[2].place(x=self.width/2, y=(self.height/2)+170, anchor='center', width=int(self.width*2/3), height=40)
-        self.widgets[3].place(x=self.width/2, y=self.height-40, anchor='center', width=int(self.width/2), height=30)
-        #self.widgets[4].place(x=self.width/2, y=self.height-40, anchor='center', width=int(self.width/2), height=30)
-
-
-
-
-    def draw_register_page(self):
-        self.clear_screen()
-
-        self.cobjects.extend([
-            self.c.create_image(0,0,image = self.images['bg'], anchor='nw'),
-            self.c.create_image(self.width/2, 150, image = self.images['logo'], anchor = 'center'),
-            # labels for text entry
-            self.c.create_text(self.width/2, self.height/2, font='Arial 10', text='Username', anchor='n', fill='white'),
-            self.c.create_text(self.width/2, self.height/2 +50, font='Arial 10', text='Email', anchor='n', fill='white'),
-            self.c.create_text(self.width/2, self.height/2 +100, font='Arial 10', text='Password', anchor='n', fill='white'),
-            self.c.create_text(self.width/2, self.height/2 +150, font='Arial 10', text='Confirm Password', anchor='n', fill='white')
-        ])
-
-        # data entry points
-        # self.widgets[0] = name
-        # self.widgets[1] = email
-        # self.widgets[2] = password
-        # self.widgets[3] = confirm password
-        # use .get() on the above for the values entered
-        self.widgets.extend([
-            Entry(self.window, font='Arial 15', justify='center', borderwidth=5, background='#bbbbbb'),
-            Entry(self.window, font='Arial 15', justify='center', borderwidth=5, background='#bbbbbb'),
-            Entry(self.window, font='Arial 15', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF'),
-            Entry(self.window, font='Arial 15', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF')
-        ])
-        self.widgets[0].place(x=self.width/2, y=(self.height/2)+30, anchor='center', width=int(self.width*2/3), height=35)
-        self.widgets[1].place(x=self.width/2, y=(self.height/2)+80, anchor='center', width=int(self.width*2/3), height=35)
-        self.widgets[2].place(x=self.width/2, y=(self.height/2)+130, anchor='center', width=int(self.width*2/3), height=35)
-        self.widgets[3].place(x=self.width/2, y=(self.height/2)+180, anchor='center', width=int(self.width*2/3), height=35)
-
-
-        # buttons
-        # self.widgets[4] = register
-        # self.widgets[5] = go to log in
-        self.widgets.extend([
-            Button(self.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
-                    activebackground="#226D22", activeforeground='white',
-                    text='Register \u2192', command=self.register_pressed),
-
-            Button(self.window, font='Arial 10', justify='center', background="#bbbbbb",
-                   text='Log In', command=self.draw_front_page)         
-        ])
-        self.widgets[4].place(x=self.width/2, y=(self.height/2)+230, anchor='center', width=int(self.width*2/3), height=40)
-        self.widgets[5].place(x=self.width/2, y=self.height-40, anchor='center', width=int(self.width/2), height=30)
 
     def return_to_front_page(self):
         self.clear_screen()
@@ -207,12 +105,6 @@ class AppDisplay:
             self.cobjects.append(
                 self.c.create_text(self.width/2, (self.height/2)+280, fill='red', font='Arial 12', text='An error occurred.', anchor='n')
             )
-        
-        
-
-
-        
-
 
     # run every frame
     def update(self):
