@@ -249,7 +249,7 @@ class AppDisplay:
             print("User successfully registered!")
             # take them to the login page with the username already input
             self.draw_front_page()
-            self.widgets[0].insert(0, valueList[-1])
+            self.widgets[0].insert(0, valueList[0])
 
         else:
             print("user registration error/failed")
