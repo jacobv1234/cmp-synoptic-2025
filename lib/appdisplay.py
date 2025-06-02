@@ -48,16 +48,19 @@ class AppDisplay:
         self.images['logo'] = ImageTk.PhotoImage(imgSmallerResize)
         self.images['title'] = ImageTk.PhotoImage(titleImgSmallerResize)
 
-        # bg = PhotoImage(file = "images/southafricanbuilding.jpg")
-        # mainBG = Label(self.window, image = bg)
-        # Place image on canvas 
+        img = Image.open('images/southafricanbuilding.jpg')
+        # resize to the new height
+        imgResized = img.resize((self.height, int(img.width * (self.height/img.height))))
+        imgcropped = imgResized.crop((0,0,self.width,self.height))
+        self.images['bg'] = ImageTk.PhotoImage(imgcropped)
 
         self.cobjects.extend([
+            self.c.create_image(0,0,image = self.images['bg'], anchor='nw'),
             self.c.create_image(self.width/2, 150, image = self.images['logo'], anchor = 'center'),
             self.c.create_image((self.width/2)-10, 160, image = self.images['title'], anchor = 'center'),
             # labels for text entry
-            self.c.create_text(self.width/2, self.height/2, font='Arial 15', text='Username', anchor='center'),
-            self.c.create_text(self.width/2, self.height/2 +70, font='Arial 15', text='Password', anchor='center')
+            self.c.create_text(self.width/2, self.height/2, font='Arial 15', text='Username', anchor='center', fill='white'),
+            self.c.create_text(self.width/2, self.height/2 +70, font='Arial 15', text='Password', anchor='center', fill='white')
         ])
 
         # data entry points
@@ -158,12 +161,13 @@ class AppDisplay:
         self.clear_screen()
 
         self.cobjects.extend([
+            self.c.create_image(0,0,image = self.images['bg'], anchor='nw'),
             self.c.create_image(self.width/2, 150, image = self.images['logo'], anchor = 'center'),
             # labels for text entry
-            self.c.create_text(self.width/2, self.height/2, font='Arial 10', text='Username', anchor='n'),
-            self.c.create_text(self.width/2, self.height/2 +50, font='Arial 10', text='Email', anchor='n'),
-            self.c.create_text(self.width/2, self.height/2 +100, font='Arial 10', text='Password', anchor='n'),
-            self.c.create_text(self.width/2, self.height/2 +150, font='Arial 10', text='Confirm Password', anchor='n')
+            self.c.create_text(self.width/2, self.height/2, font='Arial 10', text='Username', anchor='n', fill='white'),
+            self.c.create_text(self.width/2, self.height/2 +50, font='Arial 10', text='Email', anchor='n', fill='white'),
+            self.c.create_text(self.width/2, self.height/2 +100, font='Arial 10', text='Password', anchor='n', fill='white'),
+            self.c.create_text(self.width/2, self.height/2 +150, font='Arial 10', text='Confirm Password', anchor='n', fill='white')
         ])
 
         # data entry points
