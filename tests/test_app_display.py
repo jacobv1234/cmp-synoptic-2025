@@ -2,6 +2,15 @@ from lib.appdisplay import AppDisplay
 import pytest
 import tkinter as tk
 
+@pytest.fixture
+# Fixture that mocks a tkinterface window.
+def app(mocker):
+    mocker.patch("tkinter.Tk")
+    mocker.patch("tkinter.Frame")
+    mocker.patch("tkinter.Canvas")
+
+    return AppDisplay()
+
 class DummyWidget:
 
     def __init__(self):
