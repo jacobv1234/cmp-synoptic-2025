@@ -1,29 +1,157 @@
-from lib.appdisplay import AppDisplay
 import pytest
 import tkinter as tk
+from lib.appdisplay import AppDisplay
 
-class DummyWidget:
+@pytest.fixture
+# Fixture that mocks a tkinterface window.
+def display(mocker):
+    mocker.patch("tkinter.Tk")
+    mocker.patch("tkinter.Frame")
+    mocker.patch("tkinter.Canvas")
 
-    def __init__(self):
-        self.destroy_called = False
-    def destroy(self):
-        self.destroy_called = True
+    return AppDisplay()
 
-    def test_clear_screen():
-        from lib.appdisplay import AppDisplay
+# Intended behaviour: __init__ should be setting display.running as "true"
+#                     display.width and display.height should be set to 480 and 720 respectively
+def test_display_init(display):
+    assert display.running is True
+    assert display.width == 480
+    assert display.height == 720
 
-        app_display = AppDisplay()
+# Intended behaviour: cobjects array should be empty
+#                     widgets array should be empty
+def test_clear_screen(display, mocker):
+    # Set additional mockers
+    mock_cobj = mocker.Mock()
+    mock_widget =  mocker.Mock()
+    # Append arrays with mock objects
+    display.cobjects = [mock_cobj]
+    display.widgets = [mock_widget]
 
-        # Add dummy widgets with a destroy method
-        widget1 = DummyWidget()
-        widget2 = DummyWidget()
-        app_display.widgets.append(widget1)
-        app_display.cobjects.append(widget2)
+    # Call clear_screen
+    display.clear_screen()
+    
+    # Asserts
+    assert display.cobjects == []
+    assert display.widgets == []
 
-        app_display.clear_screen()
+# Intended behaviour: checks that we log in with the valuelist containing an entry "helloworld"
+def test_log_in_pressed(display, mocker):
 
-        # Assert that .destroy() was called
-        assert widget1.destroy_called
-        assert widget2.destroy_called
-        assert len(app_display.cobjects) == 0
-        assert len(app_display.widgets) == 0
+    # Set additional mockers
+
+    # isinstance expects an entry so we mock it
+    entry_mocker = mocker.Mock(spec=tk.Entry)
+    entry_mocker.get.return_value = "helloworld"
+    display.widgets = [entry_mocker]
+    mocker.patch("lib.appdisplay.open_map")
+
+    # Test with loginUser set to True
+    mocker_log_in = mocker.patch("lib.appdisplay.logInUser", return_value = True)
+
+    # Call log_in_pressed
+    display.log_in_pressed()
+
+    # asserts
+    mocker_log_in.assert_called_once_with(["helloworld"])
+
+# Setter function for register_test, both for success and failures
+def setter_register_test(display, mocker, r):
+    # Mock entry
+    entry_mocker = mocker.Mock(spec=tk.Entry)
+    entry_mocker.get.return_value = "test@pleasework.com"
+    display.widgets = [entry_mocker]
+
+    # Set the return value of registration (true/false)
+    register_mocker = mocker.patch("lib.databaseConnectionFront.registerUser", return_value = r)
+    # Patch draw_front_page
+    front_page_mocker  = mocker.patch.object(display, "draw_front_page")
+
+    return entry_mocker, register_mocker, front_page_mocker
+
+# Intended behaviour: we register with "test@pleasework.com"
+#                     draw_front_page is called properly
+#                     a mock entry is created for "test@pleasework.com"
+def test_register_pressed_true(display, mocker):
+    # Call setter function
+    entry_mocker, register_mocker, front_page_mocker = setter_register_test(display, mocker, True)
+    
+    # Call register_pressed
+    display.register_pressed()
+
+    # Asserts
+    register_mocker.assert_called_once_with(["test@pleasework.com"])
+    front_page_mocker.assert_called_once()
+    entry_mocker.insert.assert_called_once_with(0, "test@pleasework.com")
+
+# Intended behaviour: a mock error is created in display.cobjects
+def test_register_pressed_false(display, mocker):
+    entry_mocker, register_mocker, front_page_mocker = setter_register_test(display, mocker, False)
+
+    error_mocker = mocker.patch.object(display.c, "create_text", return_value = "mockError")
+
+    # Call register_pressed
+    display.register_pressed()
+
+    ## Assert
+    assert "mockError" in display.cobjects
+
+# Intended behaviour: Clear screen called successfully,
+#                     Map widget destroyed,
+#                     Shopping page drawn
+def test_open_shopping_page_map(display, mocker):
+    # Patch mock draw_shopping_page
+    mock_shopping_page = mocker.patch("lib.shopping.draw_shopping_page")
+    # Clear screen mockers
+    mock_cobj = mocker.Mock()
+    mock_widget =  mocker.Mock()
+    display.cobjects = [mock_cobj]
+    display.widgets = [mock_widget]
+    # Map mockers
+    mocker_map = mocker.Mock()
+    display.map_widget = mocker_map
+
+    # Call open_shopping_page
+    display.open_shopping_page()
+
+    # Assert screen cleared
+    assert display.cobjects == []
+    assert display.widgets == []
+    # Assert map_widget destroy called
+    mocker_map.destroy.assert_called_once()
+    # Assert draw_shopping_page called
+    mock_shopping_page.assert_called_once_with(display)
+
+# Intended behaviour: Shopping page drawn
+def test_open_shopping_page(display, mocker):
+    # Patch mock draw_shopping_page
+    mock_shopping_page = mocker.patch("lib.shopping.draw_shopping_page")
+    display.cobjects == []
+    display.widgets == []
+    # Call open_shopping_page
+    display.open_shopping_page()
+    # Assert draw_shopping_page called
+    mock_shopping_page.assert_called_once_with(display)
+
+def test_return_to_front_page(display, mocker):
+    # Patch mock draw_front_page
+    mock_front_page = mocker.patch.object(display, "draw_front_page")
+    # Clear screen mockers
+    mock_cobj = mocker.Mock()
+    mock_widget =  mocker.Mock()
+    display.cobjects = [mock_cobj]
+    display.widgets = [mock_widget]
+    # Map mockers
+    mocker_map = mocker.Mock()
+    display.map_widget = mocker_map
+
+    # Call open_shopping_page
+    display.return_to_front_page()
+
+    # Assert screen cleared
+    assert display.cobjects == []
+    assert display.widgets == []
+    # Assert map_widget destroy called
+    mocker_map.destroy.assert_called_once()
+    # Assert draw_shopping_page called
+    mock_front_page.assert_called_once()
