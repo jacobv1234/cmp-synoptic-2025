@@ -17,7 +17,24 @@ def test_display_init(display):
     assert display.running is True
     assert display.width == 480
     assert display.height == 720
+
+# Intended behaviour: cobjects array should be empty
+#                     widgets array should be empty
+def test_clear_screen(display, mocker):
+    # Set additional mockers
+    mock_cobj = mocker.Mock()
+    mock_widget = mocker.Mock()
+    # Append arrays with mock objects
+    display.cobjects = [mock_cobj]
+    display.widgets = [mock_widget]
+
+    # Call clear_screen
+    display.clear_screen()
     
+    # Asserts
+    assert display.cobjects == []
+    assert display.widgets == []
+
 class DummyWidget:
 
     def __init__(self):
