@@ -1,5 +1,5 @@
-from lib.appdisplay import AppDisplay
 import pytest
+from lib.appdisplay import AppDisplay
 import tkinter as tk
 
 @pytest.fixture
@@ -23,7 +23,7 @@ def test_display_init(display):
 def test_clear_screen(display, mocker):
     # Set additional mockers
     mock_cobj = mocker.Mock()
-    mock_widget = mocker.Mock()
+    mock_widget =  mocker.Mock()
     # Append arrays with mock objects
     display.cobjects = [mock_cobj]
     display.widgets = [mock_widget]
@@ -34,6 +34,29 @@ def test_clear_screen(display, mocker):
     # Asserts
     assert display.cobjects == []
     assert display.widgets == []
+
+# Intended behaviour: checks that we log in with the valuelist containing an entry "helloworld"
+def test_log_in_pressed(display, mocker):
+
+    # Set additional mockers
+
+    # isinstance expects an entry so we mock it
+    entry_mocker = mocker.Mock(spec=tk.Entry)
+    entry_mocker.get.return_value = "helloworld"
+    display.widgets = [entry_mocker]
+    mocker.patch("lib.appdisplay.open_map")
+
+    # Test with loginUser set to True
+    mocker_log_in = mocker.patch("lib.appdisplay.logInUser", return_value = True)
+
+    # Call log_in_pressed
+    display.log_in_pressed()
+
+    # asserts
+    mocker_log_in.assert_called_once_with(["helloworld"])
+
+
+
 
 class DummyWidget:
 
