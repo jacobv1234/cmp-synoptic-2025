@@ -1,4 +1,5 @@
 import pytest
+import tkinter as tk
 from lib.appdisplay import AppDisplay
 
 @pytest.fixture
@@ -94,3 +95,40 @@ def test_register_pressed_false(display, mocker):
 
     ## Assert
     assert "mockError" in display.cobjects
+
+# Intended behaviour: Clear screen called successfully,
+#                     Map widget destroyed,
+#                     Shopping page drawn
+def test_open_shopping_page_map(display, mocker):
+    # Patch mock draw_shopping_page
+    mock_shopping_page = mocker.patch("lib.shopping.draw_shopping_page")
+    # Clear screen mockers
+    mock_cobj = mocker.Mock()
+    mock_widget =  mocker.Mock()
+    display.cobjects = [mock_cobj]
+    display.widgets = [mock_widget]
+    # Map mockers
+    mocker_map = mocker.Mock()
+    display.map_widget = mocker_map
+
+    # Call open_shopping_page
+    display.open_shopping_page()
+
+    # Assert screen cleared
+    assert display.cobjects == []
+    assert display.widgets == []
+    # Assert map_widget destroy called
+    mocker_map.destroy.assert_called_once()
+    # Assert draw_shopping_page called
+    mock_shopping_page.assert_called_once_with(display)
+
+# Intended behaviour: Shopping page drawn
+def test_open_shopping_page(display, mocker):
+    # Patch mock draw_shopping_page
+    mock_shopping_page = mocker.patch("lib.shopping.draw_shopping_page")
+    display.cobjects == []
+    display.widgets == []
+    # Call open_shopping_page
+    display.open_shopping_page()
+    # Assert draw_shopping_page called
+    mock_shopping_page.assert_called_once_with(display)
