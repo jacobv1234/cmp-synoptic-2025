@@ -9,6 +9,8 @@ import tkinter as tk
 import time
 from lib.map import open_map
 from lib.pages import draw_front_page, draw_register_page
+from lib.shopping import draw_shopping_page
+
 class AppDisplay:
     # initialiser function
     def __init__(self, width = 480, height = 720):
@@ -39,8 +41,19 @@ class AppDisplay:
         # Bind the page functions as methods
         self.draw_front_page = lambda: draw_front_page(self)
         self.draw_register_page = lambda: draw_register_page(self)
+        self.open_map = lambda: open_map(self)
+        
 
         self.draw_front_page()
+
+    def open_shopping_page(self):
+        self.clear_screen()
+        # Remove the map widget if it exists
+        if hasattr(self, 'map_widget'):
+            self.map_widget.destroy()
+            
+        # Draw the shopping page
+        draw_shopping_page(self)
 
     def return_to_front_page(self):
         self.clear_screen()
