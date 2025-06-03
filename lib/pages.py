@@ -55,10 +55,6 @@ def draw_front_page(app):
         borderwidth=0,
         command=app.draw_register_page  # Go to register page
     )
-
-        #Button(app.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
-        #    activebackground="#226D22", activeforeground='white',
-        #    text='Map', command=app.open_map), # map button for testing
     ])
     app.widgets[2].place(x=app.width/2, y=(app.height/2)+170, anchor='center', width=int(app.width*2/3), height=40)
     app.widgets[3].place(x=app.width/2, y=app.height-40, anchor='center', width=int(app.width/2), height=30)
