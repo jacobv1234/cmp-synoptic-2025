@@ -44,7 +44,7 @@ def draw_front_page(app):
     app.widgets.extend([
         Button(app.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
                 activebackground="#226D22", activeforeground='white',
-                text='Log In Now \u2192', command = app.log_in_pressed),
+                text='Log In', command = app.log_in_pressed),
 
         Button(app.window,
         text="Register Now",
@@ -103,7 +103,7 @@ def draw_register_page(app):
     app.widgets.extend([
         Button(app.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
                 activebackground="#226D22", activeforeground='white',
-                text='Register \u2192', command=app.register_pressed),
+                text='Register', command=app.register_pressed),
 
         Button(app.window,
         text="Log In",
