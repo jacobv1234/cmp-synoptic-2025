@@ -46,8 +46,15 @@ def draw_front_page(app):
                 activebackground="#226D22", activeforeground='white',
                 text='Log In Now \u2192', command = app.log_in_pressed),
 
-        Button(app.window, font='Arial 10', justify='center', background="#bbbbbb",
-               text='Register', command = app.draw_register_page)
+        Button(app.window,
+        text="Register Now",
+        font=("Arial", 12, "bold"),
+        bg="white", fg="#3b7f3b",
+        activebackground="#e6e6e6", activeforeground="#3b7f3b",
+        relief="flat",
+        borderwidth=0,
+        command=app.draw_register_page  # Go to register page
+    )
 
         #Button(app.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
         #    activebackground="#226D22", activeforeground='white',
@@ -58,6 +65,10 @@ def draw_front_page(app):
 
 def draw_register_page(app):
     app.clear_screen()
+
+    img = Image.open('images/logo.png')
+    imgSmallerResize = img.resize((250,250))
+    app.images['logo'] = ImageTk.PhotoImage(imgSmallerResize)
 
     app.cobjects.extend([
         #app.c.create_image(0,0,image = app.images['bg'], anchor='nw'),
@@ -98,8 +109,15 @@ def draw_register_page(app):
                 activebackground="#226D22", activeforeground='white',
                 text='Register \u2192', command=app.register_pressed),
 
-        Button(app.window, font='Arial 10', justify='center', background="#bbbbbb",
-               text='Log In', command = app.draw_front_page)         
+        Button(app.window,
+        text="Log In",
+        font=("Arial", 12, "bold"),
+        bg="white", fg="#3b7f3b",
+        activebackground="#e6e6e6", activeforeground="#3b7f3b",
+        relief="flat",
+        borderwidth=0,
+        command=app.draw_front_page  # Go to login page
+    )        
     ])
     app.widgets[4].place(x=app.width/2, y=(app.height/2)+230, anchor='center', width=int(app.width*2/3), height=40)
     app.widgets[5].place(x=app.width/2, y=app.height-40, anchor='center', width=int(app.width/2), height=30)

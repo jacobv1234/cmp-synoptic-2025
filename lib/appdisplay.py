@@ -10,6 +10,8 @@ import time
 from lib.map import open_map
 from lib.pages import draw_front_page, draw_register_page
 from lib.shopping import draw_shopping_page
+from lib.welcome import draw_welcome_page
+
 
 class AppDisplay:
     # initialiser function
@@ -47,8 +49,10 @@ class AppDisplay:
         self.draw_front_page = lambda: draw_front_page(self)
         self.draw_register_page = lambda: draw_register_page(self)
         self.open_map = lambda: open_map(self)
+        self.open_welcome_page = lambda: draw_welcome_page(self)
+
         
-        self.draw_front_page()
+        self.open_welcome_page()
 
     def open_shopping_page(self):
         self.clear_screen()
