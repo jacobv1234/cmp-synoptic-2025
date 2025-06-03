@@ -21,6 +21,10 @@ class AppDisplay:
         self.window = Tk() # main window object
         self.window.protocol("WM_DELETE_WINDOW", self.close) # stop the main loop if the X button is pressed
 
+        # name and icon
+        self.window.iconbitmap('images/logo.ico')
+        self.window.title("Placeholder Title")
+
         # Canvas allows for shapes/images to be drawn to the screen + handles user input
         self.c = Canvas(self.window, width=width, height=height, bg='white') 
         self.c.pack()

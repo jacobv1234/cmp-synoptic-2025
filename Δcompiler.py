@@ -11,4 +11,4 @@ from os import system
 # add --windows-icon-from-ico="filename.ico" to set the icon
 # feel free to change --output-filename
 
-system('python -m nuitka --standalone --onefile --output-filename="Johannesburg Flytipping Report.exe" --enable-plugin=tk-inter main.py')
+system('python -m nuitka --standalone --onefile --output-filename="Johannesburg Flytipping Report.exe" --windows-icon-from-ico="images/logo.ico --enable-plugin=tk-inter main.py')
