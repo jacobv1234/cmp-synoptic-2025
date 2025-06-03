@@ -5,12 +5,10 @@ def draw_welcome_page(self):
     self.clear_screen()
     self.window.configure(bg="white")
 
-    # load the logo into app.images
+    # load the logo
     img = Image.open('images/logo.png')
     imgSmallerResize = img.resize((250,250))
     self.images['logo'] = ImageTk.PhotoImage(imgSmallerResize)
-
-    # Load and resize/crop background
     imgResized = img.resize((int(img.width * (self.height / img.height)), self.height))
     imgcropped = imgResized.crop((0, 0, self.width, self.height))
     self.images['bg'] = ImageTk.PhotoImage(imgcropped)
