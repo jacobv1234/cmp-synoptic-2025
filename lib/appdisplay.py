@@ -48,7 +48,6 @@ class AppDisplay:
         self.draw_register_page = lambda: draw_register_page(self)
         self.open_map = lambda: open_map(self)
         
-
         self.draw_front_page()
 
     def open_shopping_page(self):
