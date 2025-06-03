@@ -47,10 +47,10 @@ def open_map(self):
 
         icon_size = int(bottom_bar_height * 0.6)
         icons_info = [
-            ('back', 'https://cdn-icons-png.flaticon.com/512/93/93634.png', self.return_to_front_page),
-            ('shop', 'https://cdn-icons-png.flaticon.com/512/107/107831.png', self.open_shopping_page),
-            ('profile', 'https://cdn-icons-png.flaticon.com/512/1077/1077012.png', lambda: print("Profile clicked")),
-            ('settings', 'https://cdn-icons-png.flaticon.com/512/2099/2099058.png', lambda: print("Settings clicked"))
+            ('back', 'https://cdn-icons-png.flaticon.com/512/6443/6443396.png', self.return_to_front_page),
+            ('shop', 'https://cdn-icons-png.flaticon.com/512/2838/2838895.png', self.open_shopping_page),
+            ('profile', 'https://cdn-icons-png.flaticon.com/512/1077/1077063.png', lambda: print("Profile clicked")),
+            ('settings', 'https://cdn-icons-png.flaticon.com/512/563/563541.png', lambda: print("Settings clicked"))
         ]
 
         # Calculate spacing for even distribution
@@ -63,7 +63,15 @@ def open_map(self):
             data_stream = io.BytesIO(image_bytes)
             img = Image.open(data_stream).resize((icon_size, icon_size))
             self.icon_images[name] = ImageTk.PhotoImage(img)
-            
+
+            # Create green overlay
+            green_color = (59, 127, 59, 255)  # #3b7f3b with full opacity
+            green_img = Image.new("RGBA", img.size, green_color)
+
+            # Composite green color using alpha channel as mask
+            green_icon = Image.composite(green_img, img, img.split()[-1])  # Use alpha channel
+            self.icon_images[name] = ImageTk.PhotoImage(green_icon)
+
             btn = Button(
                 self.window,
                 image=self.icon_images[name],
