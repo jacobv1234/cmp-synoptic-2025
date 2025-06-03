@@ -13,6 +13,7 @@ from lib.shopping import draw_shopping_page
 
 class AppDisplay:
     # initialiser function
+    username = ""
     def __init__(self, width = 480, height = 720):
         self.width = width
         self.height = height
@@ -86,6 +87,7 @@ class AppDisplay:
             print("sucessfully logged in!")
             # take the user to the map
             self.username = valueList[0]
+            AppDisplay.username = valueList[0]
             open_map(self)
         else:
             print("error logging in...")

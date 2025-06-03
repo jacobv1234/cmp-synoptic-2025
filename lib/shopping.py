@@ -3,7 +3,7 @@ from tkinter import Button, Label, Frame
 from PIL import Image, ImageTk
 import io
 from urllib.request import urlopen
-
+from lib.databaseConnectionFront import getCurrentUserTP
 def draw_shopping_page(self):
     self.clear_screen()
     self.currency = 0
@@ -28,7 +28,10 @@ def draw_shopping_page(self):
     self.widgets.append(amount_label)
     
     # Start balance at 0
-    self.currency = 0
+    from lib.appdisplay import AppDisplay
+    print("HII" + AppDisplay.username)
+    self.currency = getCurrentUserTP(AppDisplay.username)
+    
     
     currency_frame = Frame(self.window, bg='white')
     currency_frame.place(relx=0.95, rely=0.05, anchor='ne')

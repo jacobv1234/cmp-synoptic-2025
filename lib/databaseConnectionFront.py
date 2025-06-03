@@ -80,5 +80,21 @@ def logInUser(loginData):
 
     finally:
         cur.close()
+
+def getCurrentUserTP(username):
+    cur = conn.cursor()
+    try:
+        getTPData = (username,)
+        getTPSelect = "SELECT userTrashPoints FROM User WHERE username = %s"
+        cur.execute(getTPSelect, getTPData) #Need to keep data and Sql seperete to avoid sql injections
+        getTP = cur.fetchone()
+        return str(getTP[0])
+        
+    except mariadb.Error as e:
+        print({e})
+        return False
+    
+    finally:
+        cur.close()
     
 
