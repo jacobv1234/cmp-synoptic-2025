@@ -30,6 +30,11 @@ class AppDisplay:
         # name and icon
         self.window.iconbitmap('images/logo_v2.ico')
         self.window.title("Johannesburg Waste Tracker")
+        
+        # open window at the centre of the screen
+        screen_width = self.window.winfo_screenwidth()
+        window_pos = int((screen_width / 2) - (width / 2))
+        self.window.geometry(f'{width}x{height}+{window_pos}+10')
 
         # Canvas allows for shapes/images to be drawn to the screen + handles user input
         self.c = Canvas(self.window, width=width, height=height, bg='white') 
