@@ -96,5 +96,42 @@ def getCurrentUserTP(username):
     
     finally:
         cur.close()
+
+def getAllShopItems():
+    cur = conn.cursor()
+    shopItemList = []
+    try:
+        getAllItems = "SELECT itemName FROM pointShop"
+        cur.execute(getAllItems) #Need to keep data and Sql seperete to avoid sql injections
+        getItemList = cur.fetchall()
+        for tupleItem in getItemList:
+            for shopItem in tupleItem:
+                shopItemList.append(shopItem)
+        return shopItemList
+        
+    except mariadb.Error as e:
+        print({e})
+        return []
     
+    finally:
+        cur.close()
+
+def getAllShopPrices():
+    cur = conn.cursor()
+    priceItemList = []
+    try:
+        getAllItems = "SELECT itemPrice FROM pointShop"
+        cur.execute(getAllItems) #Need to keep data and Sql seperete to avoid sql injections
+        getPriceList = cur.fetchall()
+        for tuplePrice in getPriceList:
+            for shopPrice in tuplePrice:
+                priceItemList.append(shopPrice)
+        return priceItemList
+        
+    except mariadb.Error as e:
+        print({e})
+        return []
+    
+    finally:
+        cur.close()
 

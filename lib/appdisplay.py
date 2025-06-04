@@ -11,12 +11,16 @@ from lib.map import open_map
 from lib.pages import draw_front_page, draw_register_page
 from lib.shopping import draw_shopping_page
 
+
+
 class AppDisplay:
     # initialiser function
     username = ""
     def __init__(self, width = 480, height = 720):
         self.width = width
         self.height = height
+        self.itemInfo = []
+        self.map_widget = []
 
         self.window = Tk() # main window object
         self.window.protocol("WM_DELETE_WINDOW", self.close) # stop the main loop if the X button is pressed
@@ -51,7 +55,7 @@ class AppDisplay:
         self.clear_screen()
         # Remove the map widget if it exists
         if hasattr(self, 'map_widget'):
-            self.map_widget.destroy()
+            self.map_widget.destroy() # type: ignore
             
         # Draw the shopping page
         draw_shopping_page(self)
@@ -61,7 +65,7 @@ class AppDisplay:
 
         # Remove the map widget if it exists
         if hasattr(self, 'map_widget'):
-            self.map_widget.destroy()
+            self.map_widget.destroy() # type: ignore
 
         # Recreate the front page
         self.draw_front_page()
@@ -129,4 +133,35 @@ class AppDisplay:
     def close(self):
         self.window.destroy()
         self.running = False
+    
+    def getChecked(self):
+        itemsSelected = []
+        priceTotal = 0
 
+        for i in self.itemInfo:
+            isChecked = i[0]
+            itemName = i[1]
+            itemPrice = i[2]
+
+            if isChecked.get():
+                itemsSelected.append(itemName)
+                priceTotal += itemPrice
+            
+        print(itemsSelected)
+        print(priceTotal)
+
+        shopBasketFrame = Frame(self.window, bg="white")
+        shopBasketFrame.place(relx=0.50, rely=0.50, anchor='center')
+        self.widgets.append(shopBasketFrame)
+
+        itemListLabel = Label(shopBasketFrame, text=f"YOUR CHECKOUT ITEMS: {itemsSelected}", font=('Arial', 14), bg='white')
+        itemListLabel.pack(side="top")
+        self.widgets.append(itemListLabel)
+
+        totalPriceLabel = Label(shopBasketFrame, text=f"TOTAL COST: {priceTotal} TP", font=('Arial', 14), bg='white')
+        totalPriceLabel.pack(side="top")
+        self.widgets.append(totalPriceLabel)
+
+        buyBtn = Button(shopBasketFrame, font='Arial 14', justify='center', background="#3b7f3b", foreground='white',activebackground="#226D22", activeforeground='white',text='Buy Item')
+        buyBtn.pack(side="top")
+        self.widgets.append(buyBtn)

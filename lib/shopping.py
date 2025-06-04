@@ -1,12 +1,16 @@
 # shopping.py
-from tkinter import Button, Label, Frame
+from tkinter import Button, Label, Frame, Checkbutton, BooleanVar
+#from tkinter .messagebox import showinfo
 from PIL import Image, ImageTk
 import io
 from urllib.request import urlopen
-from lib.databaseConnectionFront import getCurrentUserTP
+from lib.databaseConnectionFront import getCurrentUserTP, getAllShopItems, getAllShopPrices
+
+
 def draw_shopping_page(self):
     self.clear_screen()
     self.currency = 0
+    self.itemInfo = []
 
     # Currency display with coin icon
     coin_url = "https://cdn-icons-png.flaticon.com/512/138/138292.png"
@@ -15,7 +19,7 @@ def draw_shopping_page(self):
     coin_img = Image.open(coin_stream).resize((24, 24))
     self.images['coin'] = ImageTk.PhotoImage(coin_img) 
 
-    # currency logic here not finished
+    # currency logic
     currency_frame = Frame(self.window, bg='white')
     currency_frame.place(relx=0.95, rely=0.05, anchor='ne')
     self.widgets.append(currency_frame)
@@ -43,6 +47,32 @@ def draw_shopping_page(self):
     amount_label = Label(currency_frame, text=f"{self.currency}", font=('Arial', 14), bg='white')
     amount_label.pack(side='left')
     self.widgets.append(amount_label)
+
+    #Generate the item shop list from DB
+
+    shopListFrame = Frame(self.window, bg="white")
+    shopListFrame.place(relx=0.50, rely=0.25, anchor='center')
+    self.widgets.append(shopListFrame)
+
+    self.shopItemNames = getAllShopItems()
+    print(self.shopItemNames)
+    self.shopItemPrice = getAllShopPrices()
+    for i, j in zip(self.shopItemNames, self.shopItemPrice):
+        checkItem = BooleanVar()
+        self.itemInfo.append((checkItem, i, j))
+        checkbox = Checkbutton(shopListFrame, text=f"{i}: {j} TP", variable=checkItem)
+        checkbox.pack(side="top")
+        self.widgets.append(checkbox)
+            
+            #checkbox = Checkbutton(shopListFrame, text=f"{i,j}", variable=checkItem)
+            #shopListLabel = Label(shopListFrame, text=f"{i,j}", font=('Arial', 14), bg='white')
+            #checkbox.pack(side="top")
+            #self.widgets.append(checkbox)
+        
+          
+    
+
+
 
 
     # Create the bottom bar
@@ -76,6 +106,7 @@ def draw_shopping_page(self):
     img = Image.open(data_stream).resize((30, 30))
     self.images['trolley'] = ImageTk.PhotoImage(img)
     trolley_btn = Button(self.window, image=self.images['trolley'],
-                       bg="white", relief="flat")
+                       bg="white", relief="flat", command=self.getChecked)
     trolley_btn.place(x=self.width-50, y=self.height-45)
     self.widgets.append(trolley_btn)
+
