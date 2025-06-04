@@ -12,7 +12,7 @@ def draw_shopping_page(self):
     self.currency = 0
     self.itemInfo = []
 
-    # Currency display with coin icon
+    # Display coin icon
     coin_url = "https://cdn-icons-png.flaticon.com/512/138/138292.png"
     coin_bytes = urlopen(coin_url).read()
     coin_stream = io.BytesIO(coin_bytes)
@@ -31,7 +31,7 @@ def draw_shopping_page(self):
     amount_label.pack(side='left')
     self.widgets.append(amount_label)
     
-    # Start balance at 0
+    # Start balance at users account balance
     from lib.appdisplay import AppDisplay
     print("HII" + AppDisplay.username)
     self.currency = getCurrentUserTP(AppDisplay.username)
@@ -68,12 +68,6 @@ def draw_shopping_page(self):
             #shopListLabel = Label(shopListFrame, text=f"{i,j}", font=('Arial', 14), bg='white')
             #checkbox.pack(side="top")
             #self.widgets.append(checkbox)
-        
-          
-    
-
-
-
 
     # Create the bottom bar
     bottom_bar_height = 0.1 * self.height  # 10% of the height
