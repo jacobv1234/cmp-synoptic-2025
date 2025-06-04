@@ -66,18 +66,22 @@ def registerUser(regData):
         cur.close()
 
 def logInUser(loginData):
-    # Get Cursor
     cur = conn.cursor()
     try:
-        print("here")
         loginCheck = verify(loginData[0], loginData[1])
         if loginCheck:
-            return True
-    
-    except mariadb.Error as e:
-        print({e})
+            # Fetch the user ID from the database
+            cur.execute("SELECT userID FROM User WHERE username = %s", (loginData[0],))
+            result = cur.fetchone()
+            if result:
+                return result[0]  # Return the userID (integer)
+            else:
+                return False
+        else:
+            return False
+    except Exception as e:
+        print(e)
         return False
-
     finally:
         cur.close()
 
@@ -132,6 +136,19 @@ def getAllShopPrices():
         print({e})
         return []
     
+    finally:
+        cur.close()
+
+def getMarkerCountForUser(user_id):
+    cur = conn.cursor()
+    try:
+        query = "SELECT COUNT(*) FROM markers WHERE user_id = %s"
+        cur.execute(query, (user_id,))
+        count = cur.fetchone()[0]
+        return count
+    except Exception as e:
+        print(e)
+        return 0
     finally:
         cur.close()
 
