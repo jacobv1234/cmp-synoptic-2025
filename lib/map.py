@@ -4,6 +4,8 @@ from tkinter import Label, Button
 from PIL import Image, ImageTk, ImageDraw
 import io
 from urllib.request import urlopen
+from lib.markers import draw_markers_page
+from lib.databaseConnectionFront import getMarkerCountForUser
 
 def open_map(self):
     # Remove all widgets from the window
@@ -54,7 +56,7 @@ def open_map(self):
         ('settings', 'https://cdn-icons-png.flaticon.com/512/563/563541.png', self.open_settings_page)
     ]
 
-    # Calculate spacing for even distribution
+    # Calculate spacing for icons
     total_icons = len(icons_info)
     spacing = self.width / (total_icons + 1) 
 
@@ -66,10 +68,8 @@ def open_map(self):
         self.icon_images[name] = ImageTk.PhotoImage(img)
 
         # Create green overlay
-        green_color = (59, 127, 59, 255)  # #3b7f3b with full opacity
+        green_color = (59, 127, 59, 255)
         green_img = Image.new("RGBA", img.size, green_color)
-
-        # Composite green color using alpha channel as mask
         green_icon = Image.composite(green_img, img, img.split()[-1])  # Use alpha channel
         self.icon_images[name] = ImageTk.PhotoImage(green_icon)
 
@@ -111,7 +111,7 @@ def open_map(self):
     self.widgets.append(top_bar)
 
     
-    # Create a white circle with black border as an image
+    # Create a white circle with green border
     circle_size = 50
     circle_img = Image.new("RGBA", (circle_size, circle_size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(circle_img)
@@ -127,23 +127,28 @@ def open_map(self):
         self.icon_images = {}
     self.icon_images['warning_circle'] = ImageTk.PhotoImage(circle_img)
 
-    # Place the circle as a Label inside the top bar
-    circle_label = tk.Label(
+    # Create the warning icon button in the top bar
+    warning_button = Button(
         top_bar,
         image=self.icon_images['warning_circle'],
-        bg="white"
+        bg="white",
+        relief="flat",
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda:draw_markers_page(self)
     )
-    circle_label.place(
+    warning_button.place(
         x=10,
         y=(bar_height - circle_size)//2,
         width=circle_size,
         height=circle_size
     )
+    self.widgets.append(warning_button)
 
-    number = "4" #to be changed with how many markers there are for that user
+    number = str(getMarkerCountForUser(self.user_id))
     font = ("Arial", 20, "bold")
 
-    # To create text with black border
+    # To create text
     number_label_shadow = tk.Label(
         top_bar,
         text=number,
@@ -169,4 +174,4 @@ def open_map(self):
         height=24
     )
 
-    self.widgets.extend([circle_label, number_label_shadow, number_label])
+    self.widgets.extend([number_label_shadow, number_label])
