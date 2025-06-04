@@ -11,7 +11,7 @@ from lib.map import open_map
 from lib.pages import draw_front_page, draw_register_page
 from lib.shopping import draw_shopping_page
 from lib.welcome import draw_welcome_page
-
+from lib.settings import draw_settings_page
 
 
 
@@ -54,25 +54,19 @@ class AppDisplay:
         self.draw_register_page = lambda: draw_register_page(self)
         self.open_map = lambda: open_map(self)
         self.open_welcome_page = lambda: draw_welcome_page(self)
+        self.open_settings_page = lambda: draw_settings_page(self)
 
         
         self.open_welcome_page()
 
     def open_shopping_page(self):
         self.clear_screen()
-        # Remove the map widget if it exists
-        if hasattr(self, 'map_widget'):
-            self.map_widget.destroy() # type: ignore
             
         # Draw the shopping page
         draw_shopping_page(self)
 
     def return_to_front_page(self):
         self.clear_screen()
-
-        # Remove the map widget if it exists
-        if hasattr(self, 'map_widget'):
-            self.map_widget.destroy() # type: ignore
 
         # Recreate the front page
         self.draw_front_page()
@@ -84,6 +78,11 @@ class AppDisplay:
             widget.destroy()
         self.cobjects = []
         self.widgets = []
+
+        # Remove the map widget if it exists
+        if self.map_widget != []:
+            self.map_widget.destroy() # type: ignore
+            self.map_widget = []
     
     # button functions
     def log_in_pressed(self):

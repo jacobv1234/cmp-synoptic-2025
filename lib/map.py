@@ -51,7 +51,7 @@ def open_map(self):
         ('back', 'https://cdn-icons-png.flaticon.com/512/6443/6443396.png', self.return_to_front_page),
         ('shop', 'https://cdn-icons-png.flaticon.com/512/2838/2838895.png', self.open_shopping_page),
         ('profile', 'https://cdn-icons-png.flaticon.com/512/1077/1077063.png', lambda: print("Profile clicked")),
-        ('settings', 'https://cdn-icons-png.flaticon.com/512/563/563541.png', lambda: print("Settings clicked"))
+        ('settings', 'https://cdn-icons-png.flaticon.com/512/563/563541.png', self.open_settings_page)
     ]
 
     # Calculate spacing for even distribution
