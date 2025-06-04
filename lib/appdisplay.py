@@ -3,15 +3,13 @@ from tkinter import *
 
 from PIL import Image, ImageTk
 from lib.databaseConnectionFront import registerUser, logInUser
-import subprocess
-import tkintermapview
 import tkinter as tk
-import time
 from lib.map import open_map
 from lib.pages import draw_front_page, draw_register_page
 from lib.shopping import draw_shopping_page
 from lib.welcome import draw_welcome_page
 from lib.settings import draw_settings_page
+from lib.markers import draw_markers_page
 
 
 
@@ -64,6 +62,12 @@ class AppDisplay:
         
         self.open_welcome_page()
 
+    def open_markers_page(self):
+        self.clear_screen()
+        
+        # Draw the markers page
+        draw_markers_page(self)
+
     def open_shopping_page(self):
         self.clear_screen()
             
@@ -97,19 +101,24 @@ class AppDisplay:
             if isinstance(self.widgets[i], Entry):
                 valueList.append(self.widgets[i].get())
         
-        checkLoginDetails = logInUser(valueList)
-        if checkLoginDetails:
-            print("sucessfully logged in!")
-            # take the user to the map
+        # Call logInUser
+        user_id = logInUser(valueList)
+        
+        if user_id:
+            print("Successfully logged in!")
             self.username = valueList[0]
+            self.user_id = user_id 
             AppDisplay.username = valueList[0]
-            open_map(self)
+            self.open_map()
         else:
-            print("error logging in...")
-
-            # display an error message
+            print("Error logging in...")
             self.cobjects.append(
-                self.c.create_text(self.width/2, (self.height/2)+240, fill='red', font='Arial 12', text='The email or password is incorrect.', anchor='n')
+                self.c.create_text(
+                    self.width/2, (self.height/2)+240,
+                    fill='red', font='Arial 12',
+                    text='The email or password is incorrect.',
+                    anchor='n'
+                )
             )
 
 
