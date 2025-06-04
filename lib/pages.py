@@ -5,8 +5,8 @@ def draw_front_page(app):
     app.clear_screen()
 
     # load the logo into app.images
-    img = Image.open('images/logo.png')
-    imgSmallerResize = img.resize((250,250))
+    img = Image.open('images/logo_v2.png')
+    imgSmallerResize = img.resize((200,200))
     app.images['logo'] = ImageTk.PhotoImage(imgSmallerResize)
 
     img = Image.open('images/southafricanbuilding.jpg')
@@ -62,8 +62,8 @@ def draw_front_page(app):
 def draw_register_page(app):
     app.clear_screen()
 
-    img = Image.open('images/logo.png')
-    imgSmallerResize = img.resize((250,250))
+    img = Image.open('images/logo_v2.png')
+    imgSmallerResize = img.resize((200,200))
     app.images['logo'] = ImageTk.PhotoImage(imgSmallerResize)
 
     app.cobjects.extend([
