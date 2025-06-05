@@ -29,6 +29,7 @@ def draw_front_page(app):
         app.c.create_text(app.width/2, app.height/2 -5, font='Arial 15', text='Username', anchor='center', fill='#3b7f3b'),
         app.c.create_text(app.width/2, app.height/2 +65, font='Arial 15', text='Password', anchor='center', fill='#3b7f3b')
     ])
+    
 
     # data entry points
     # app.widgets[0] = name
@@ -42,6 +43,7 @@ def draw_front_page(app):
         Entry(app.window, font='Arial 15', justify='center', borderwidth=0, background=colour, show='\u25CF', relief='solid', 
               highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2, foreground='#3b7f3b')
     ])
+    app.widgets[0].insert(0, app.settings['saved_user'])
     app.widgets[0].place(x=app.width/2, y=(app.height/2)+30, anchor='center', width=int(app.width*2/3), height=40)
     app.widgets[1].place(x=app.width/2, y=(app.height/2)+100, anchor='center', width=int(app.width*2/3), height=40)
 

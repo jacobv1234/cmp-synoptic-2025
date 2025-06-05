@@ -108,7 +108,8 @@ def save_settings(settings, filename  ='settings.json'):
 def apply_settings(self):
     settings = {
         'language': self.language.get(),
-        'theme': self.theme.get()
+        'theme': self.theme.get(),
+        'saved_user': self.settings['saved_user']
     }
 
     save_settings(settings)
