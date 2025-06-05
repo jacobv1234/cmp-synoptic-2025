@@ -1,6 +1,6 @@
 import tkintermapview
 import tkinter as tk
-from tkinter import Label, Button
+from tkinter import Label, Button, PhotoImage
 from PIL import Image, ImageTk, ImageDraw
 import io
 from urllib.request import urlopen
@@ -21,7 +21,6 @@ def open_map(self):
 
     # Place the map widget to fill the entire window
     self.map_widget.place(relx=0, rely=0, relwidth=1, relheight=1)
-    
     # Configure map settings
     self.map_widget.set_position(-26.2041, 28.0473) # Example coordinates for Johannesburg
     self.map_widget.set_zoom(13)
@@ -94,12 +93,14 @@ def open_map(self):
         )
         self.widgets.append(btn)
 
-    bar_width = int(self.width * 0.2)
-    bar_height = 60  # or int(self.height * 0.1) for 10% of height
+
+    
+
+    bar_width = 195
+    bar_height = 70  # or int(self.height * 0.1) for 10% of height
 
     top_bar = tk.Frame(
         self.window,
-        bg="white",
         width=bar_width,
         height=bar_height
     )
@@ -110,68 +111,78 @@ def open_map(self):
     )
     self.widgets.append(top_bar)
 
+    openMarkerImg = Image.open("images/addTrashMarkerBTN.png")
+    self.addMarkerImg = ImageTk.PhotoImage(openMarkerImg)
+    addMarkerButton = Button(top_bar, image = self.addMarkerImg, command=lambda:draw_markers_page(self))
+    addMarkerButton.place(x=0, y=0, width = bar_width, height = bar_height)
+    self.widgets.append(addMarkerButton)
+
     
-    # Create a white circle with green border
-    circle_size = 50
-    circle_img = Image.new("RGBA", (circle_size, circle_size), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(circle_img)
-    draw.ellipse((0, 0, circle_size-1, circle_size-1), fill="white", outline="#3b7f3b", width=2)
+    
+    
+    
+    # # Create a white circle with green border
+    # #circle_size = 50
+    # #circle_img = Image.new("RGBA", (circle_size, circle_size), (0, 0, 0, 0))
+    # #draw = ImageDraw.Draw(circle_img)
+    # #draw.ellipse((0, 0, circle_size-1, circle_size-1), fill="white", outline="#3b7f3b", width=2)
 
-    # Load and paste warning icon into the circle
-    warning_img = Image.open(io.BytesIO(urlopen("https://cdn-icons-png.flaticon.com/512/3756/3756712.png").read()))
-    warning_img = warning_img.resize((int(circle_size*0.6), int(circle_size*0.6)), Image.Resampling.LANCZOS)
-    offset = ((circle_size - warning_img.width)//2, (circle_size - warning_img.height)//2)
-    circle_img.paste(warning_img, offset, warning_img)
+    # # Load and paste warning icon into the circle
+    # warning_img = Image.open("images/addTrashMarkerBTN.png")
+    # warning_img = warning_img.resize((150, 150), 0)
+    # warningImgSize = 50
+    # #offset = ((circle_size - warning_img.width)//2, (circle_size - warning_img.height)//2)
+    # #circle_img.paste(warning_img)
 
-    if not hasattr(self, 'icon_images'):
-        self.icon_images = {}
-    self.icon_images['warning_circle'] = ImageTk.PhotoImage(circle_img)
+    # if not hasattr(self, 'icon_images'):
+    #     self.icon_images = {}
+    # self.icon_images['warning_circle'] = ImageTk.PhotoImage(warning_img)
 
-    # Create the warning icon button in the top bar
-    warning_button = Button(
-        top_bar,
-        image=self.icon_images['warning_circle'],
-        bg="white",
-        relief="flat",
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda:draw_markers_page(self)
-    )
-    warning_button.place(
-        x=10,
-        y=(bar_height - circle_size)//2,
-        width=circle_size,
-        height=circle_size
-    )
-    self.widgets.append(warning_button)
+    # # Create the warning icon button in the top bar
+    # warning_button = Button(
+    #     top_bar,
+    #     image=self.icon_images['warning_circle'],
+    #     bg="white",
+    #     relief="flat",
+    #     borderwidth=0,
+    #     highlightthickness=0,
+    #     command=lambda:draw_markers_page(self)
+    # )
+    # warning_button.place(
+    #     x=10,
+    #     y=(bar_height - warningImgSize)//2,
+    #     width=500,
+    #     height=200
+    # )
+    # self.widgets.append(warning_button)
 
-    number = str(getMarkerCountForUser(self.user_id))
-    font = ("Arial", 20, "bold")
+    # number = str(getMarkerCountForUser(self.user_id))
+    # font = ("Arial", 20, "bold")
 
-    # To create text
-    number_label_shadow = tk.Label(
-        top_bar,
-        text=number,
-        font=font,
-        fg="black",
-        bg="white"
-    )
-    number_label_shadow.place(
-        x=10 + circle_size + 10 + 1,
-        y=(bar_height - 24)//2 + 1,
-        height=24
-    )
-    number_label = tk.Label(
-        top_bar,
-        text=number,
-        font=font,
-        fg="#3b7f3b",
-        bg="white"
-    )
-    number_label.place(
-        x=10 + circle_size + 10,
-        y=(bar_height - 24)//2,
-        height=24
-    )
+    # # To create text
+    # number_label_shadow = tk.Label(
+    #     top_bar,
+    #     text=number,
+    #     font=font,
+    #     fg="black",
+    #     bg="white"
+    # )
+    # number_label_shadow.place(
+    #     x=10 + warningImgSize + 10 + 1,
+    #     y=(bar_height - 24)//2 + 1,
+    #     height=24
+    # )
+    # number_label = tk.Label(
+    #     top_bar,
+    #     text=number,
+    #     font=font,
+    #     fg="#3b7f3b",
+    #     bg="white"
+    # )
+    # number_label.place(
+    #     x=10 + warningImgSize + 10,
+    #     y=(bar_height - 24)//2,
+    #     height=24
+    # )
 
-    self.widgets.extend([number_label_shadow, number_label])
+    # self.widgets.extend([number_label_shadow, number_label])

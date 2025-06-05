@@ -102,7 +102,7 @@ def draw_shopping_page(self):
     img = Image.open(data_stream).resize((30, 30))
     self.images['trolley'] = ImageTk.PhotoImage(img)
     trolley_btn = Button(self.window, image=self.images['trolley'],
-                       bg="white", relief="flat", command=self.getChecked)
-    trolley_btn.place(x=self.width-50, y=self.height-45)
+                       bg="white", relief="flat", command=self.getChecked, text="Add to Basket")
+    trolley_btn.place(x=self.width-125, y=self.height-550)
     self.widgets.append(trolley_btn)
 
