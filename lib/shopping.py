@@ -54,6 +54,8 @@ def draw_shopping_page(self):
     shopListFrame.place(relx=0.50, rely=0.25, anchor='center')
     self.widgets.append(shopListFrame)
 
+    
+
     self.shopItemNames = getAllShopItems()
     print(self.shopItemNames)
     self.shopItemPrice = getAllShopPrices()
