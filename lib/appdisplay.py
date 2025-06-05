@@ -181,11 +181,15 @@ class AppDisplay:
         print(itemsSelected)
         print(priceTotal)
 
-        if hasattr(self, "shopBasketFrame"):
+        if hasattr(self, "shopBasketFrame") and self.shopBasketFrame.winfo_exists:
             for widget in self.shopBasketFrame.winfo_children():
                     widget.destroy()
+
         
         if len(itemsSelected) <= 0:
+            if hasattr(self, "shopBasketFrame") and self.shopBasketFrame.winfo_exists:
+                self.shopBasketFrame.destroy()
+                del self.shopBasketFrame
             return
         
         self.shopBasketFrame = Frame(self.window, bg="white")            

@@ -106,3 +106,7 @@ def draw_shopping_page(self):
     trolley_btn.place(x=self.width-125, y=self.height-550)
     self.widgets.append(trolley_btn)
 
+    basketLabel = Label(self.window, text=f"Add selected to cart", font=('Arial', 10), bg='white')
+    basketLabel.place(relx=0.78, rely=0.30, anchor='center')
+    self.widgets.append(basketLabel)
+

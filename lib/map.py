@@ -164,33 +164,33 @@ def open_map(self):
     # )
     # self.widgets.append(warning_button)
 
-    # # number = str(getMarkerCountForUser(self.user_id))
-    # # font = ("Arial", 20, "bold")
+    number = str(getMarkerCountForUser(self.user_id))
+    font = ("Arial", 10, "bold")
 
-    # # To create text
-    # number_label_shadow = tk.Label(
-    #     top_bar,
-    #     text=number,
-    #     font=font,
-    #     fg="black",
-    #     bg="white"
-    # )
-    # number_label_shadow.place(
-    #     x=10 + circle_size + 10 + 1,
-    #     y=(bar_height - 24)//2 + 1,
-    #     height=24
-    # )
-    # number_label = tk.Label(
-    #     top_bar,
-    #     text=number,
-    #     font=font,
-    #     fg="#3b7f3b",
-    #     bg="white"
-    # )
-    # number_label.place(
-    #     x=10 + circle_size + 10,
-    #     y=(bar_height - 24)//2,
-    #     height=24
-    # )
+    # To create text
+    number_label_shadow = tk.Label(
+        top_bar,
+        text=number,
+        font=font,
+        fg="black",
+        bg="white"
+    )
+    number_label_shadow.place(
+        x=(10 + 50 + 10)+48,
+        y=((bar_height - 24)//2)+31,
+        height=14
+    )
+    number_label = tk.Label(
+        top_bar,
+        text=(f"{number} Markers"),
+        font=font,
+        fg="#133a6f",
+        bg=(addMarkerButton.cget("bg"))
+    )
+    number_label.place(
+        x=(10 + 50 + 10)+48,
+        y=((bar_height - 24)//2)+31,
+        height=14
+    )
 
-    # # self.widgets.extend([number_label_shadow, number_label])
+    self.widgets.extend([number_label_shadow, number_label])
