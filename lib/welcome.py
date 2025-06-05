@@ -3,7 +3,13 @@ from PIL import Image, ImageTk
 
 def draw_welcome_page(self):
     self.clear_screen()
-    self.window.configure(bg="white")
+    if self.settings['theme'] == 'Light':
+        colour = 'white'
+        highlight = 'black'
+    else:
+        colour = "#2A2A2E"
+        highlight = 'white'
+    self.window.configure(bg=colour)
 
     # load the logo
     img = Image.open('images/logo_v2.png')
@@ -14,19 +20,20 @@ def draw_welcome_page(self):
     self.images['bg'] = ImageTk.PhotoImage(imgcropped)
 
     # Display the logo
-    logo_label = tk.Label(self.window, image=self.images['logo'], bg='white')
+    logo_label = tk.Label(self.window, image=self.images['logo'], bg=colour)
     logo_label.place(relx=0.5, rely=0.18, anchor='center')
     self.widgets.append(logo_label)
 
     # Welcome Text
-    welcome_label = tk.Label(self.window, text="Welcome To \nJohannesburg Waste Tracker", font=("Arial", 22, "bold"), bg="white", fg="#3b7f3b")
+    welcome_label = tk.Label(self.window, text="Welcome To \nJohannesburg Waste Tracker", font=("Arial", 22, "bold"), bg=colour, fg="#3b7f3b")
     welcome_label.place(relx=0.5, rely=0.38, anchor='center')
     self.widgets.append(welcome_label)
 
     # Subtitle
     subtitle_label = tk.Label(self.window,
         text="Create an account and begin earning lots \nof cool items and rewards!",
-        font=("Arial", 12), bg="white", fg="#444")
+        font=("Arial", 12), bg=colour, fg=highlight
+    )
     subtitle_label.place(relx=0.5, rely=0.5, anchor='center')
     self.widgets.append(subtitle_label)
 
@@ -34,8 +41,8 @@ def draw_welcome_page(self):
     get_started_btn = tk.Button(self.window,
         text="Get Started",
         font=("Arial", 14, "bold"),
-        bg="#3b7f3b", fg="white",
-        activebackground="#3b7f3b", activeforeground="white",
+        bg="#3b7f3b", fg=colour,
+        activebackground="#3b7f3b", activeforeground=colour,
         relief="flat",
         padx=20, pady=10,
         command=self.draw_register_page  # Go to register page
@@ -48,8 +55,8 @@ def draw_welcome_page(self):
     login_btn = tk.Button(self.window,
         text="Log In",
         font=("Arial", 12, "bold"),
-        bg="white", fg="#3b7f3b",
-        activebackground="#e6e6e6", activeforeground="#3b7f3b",
+        bg=colour, fg="#3b7f3b",
+        activebackground=colour, activeforeground="#3b7f3b",
         relief="flat",
         borderwidth=0,
         command=self.draw_front_page  # Go to login page

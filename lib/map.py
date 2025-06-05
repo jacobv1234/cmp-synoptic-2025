@@ -11,6 +11,13 @@ def open_map(self):
     # Remove all widgets from the window
     self.clear_screen()
 
+    if self.settings['theme'] == 'Light':
+        colour = 'white'
+        highlight = 'black'
+    else:
+        colour = '#2A2A2E'
+        highlight = 'white'
+
     # Create and pack the map widget directly in the main window
     self.map_widget = tkintermapview.TkinterMapView(
         self.window,
@@ -31,7 +38,7 @@ def open_map(self):
     bottom_bar_height = 0.1 * self.height  # 10% of the height
     bottom_bar = Label(
         self.window,
-        bg="white",
+        bg=colour,
         anchor='sw',
     )
 
@@ -76,7 +83,7 @@ def open_map(self):
         btn = Button(
             self.window,
             image=self.icon_images[name],
-            bg="white",
+            bg=colour,
             relief="flat",
             borderwidth=0,
             highlightthickness=0,
@@ -99,7 +106,7 @@ def open_map(self):
 
     top_bar = tk.Frame(
         self.window,
-        bg="white",
+        bg=colour,
         width=bar_width,
         height=bar_height
     )
@@ -115,7 +122,7 @@ def open_map(self):
     circle_size = 50
     circle_img = Image.new("RGBA", (circle_size, circle_size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(circle_img)
-    draw.ellipse((0, 0, circle_size-1, circle_size-1), fill="white", outline="#3b7f3b", width=2)
+    draw.ellipse((0, 0, circle_size-1, circle_size-1), fill=colour, outline="#3b7f3b", width=2)
 
     # Load and paste warning icon into the circle
     warning_img = Image.open(io.BytesIO(urlopen("https://cdn-icons-png.flaticon.com/512/3756/3756712.png").read()))
@@ -131,7 +138,7 @@ def open_map(self):
     warning_button = Button(
         top_bar,
         image=self.icon_images['warning_circle'],
-        bg="white",
+        bg=colour,
         relief="flat",
         borderwidth=0,
         highlightthickness=0,
@@ -153,8 +160,8 @@ def open_map(self):
         top_bar,
         text=number,
         font=font,
-        fg="black",
-        bg="white"
+        fg=highlight,
+        bg=colour
     )
     number_label_shadow.place(
         x=10 + circle_size + 10 + 1,
@@ -166,7 +173,7 @@ def open_map(self):
         text=number,
         font=font,
         fg="#3b7f3b",
-        bg="white"
+        bg=colour
     )
     number_label.place(
         x=10 + circle_size + 10,

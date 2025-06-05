@@ -22,6 +22,11 @@ class AppDisplay:
 
         self.settings = settings
 
+        if self.settings['theme'] == 'Light':
+            colour = 'white'
+        else:
+            colour = '#2A2A2E'
+
         self.itemInfo = []
         self.map_widget = []
 
@@ -38,7 +43,7 @@ class AppDisplay:
         self.window.geometry(f'{width}x{height}+{window_pos}+10')
 
         # Canvas allows for shapes/images to be drawn to the screen + handles user input
-        self.c = Canvas(self.window, width=width, height=height, bg='white') 
+        self.c = Canvas(self.window, width=width, height=height, bg=colour) 
         self.c.pack()
 
         # lists to hold objects drawn to the screen - cobjects is for stuff on the canvas, widgets is for buttons, labels, etc
