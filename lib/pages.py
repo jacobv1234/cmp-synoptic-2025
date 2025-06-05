@@ -4,6 +4,13 @@ from PIL import Image, ImageTk
 def draw_front_page(app):
     app.clear_screen()
 
+    if app.settings['theme'] == 'Light':
+        colour = 'white'
+        highlight = 'black'
+    else:
+        colour = "#2A2A2E"
+        highlight = 'white'
+
     # load the logo into app.images
     img = Image.open('images/logo_v2.png')
     imgSmallerResize = img.resize((200,200))
@@ -22,6 +29,7 @@ def draw_front_page(app):
         app.c.create_text(app.width/2, app.height/2 -5, font='Arial 15', text='Username', anchor='center', fill='#3b7f3b'),
         app.c.create_text(app.width/2, app.height/2 +65, font='Arial 15', text='Password', anchor='center', fill='#3b7f3b')
     ])
+    
 
     # data entry points
     # app.widgets[0] = name
@@ -29,12 +37,13 @@ def draw_front_page(app):
     # use .get() on the above for the values entered
     app.widgets.extend([
         #Entry(app.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb'),
-        Entry(app.window, font='Arial 15', justify='center', borderwidth=0, background='white', relief='solid', 
-              highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2),
+        Entry(app.window, font='Arial 15', justify='center', borderwidth=0, background=colour, relief='solid', 
+              highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2, foreground=highlight),
         #Entry(app.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF')
-        Entry(app.window, font='Arial 15', justify='center', borderwidth=0, background='white', show='\u25CF', relief='solid', 
+        Entry(app.window, font='Arial 15', justify='center', borderwidth=0, background=colour, show='\u25CF', relief='solid', 
               highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2, foreground='#3b7f3b')
     ])
+    app.widgets[0].insert(0, app.settings['saved_user'])
     app.widgets[0].place(x=app.width/2, y=(app.height/2)+30, anchor='center', width=int(app.width*2/3), height=40)
     app.widgets[1].place(x=app.width/2, y=(app.height/2)+100, anchor='center', width=int(app.width*2/3), height=40)
 
@@ -42,15 +51,15 @@ def draw_front_page(app):
     # app.widgets[2] = log in
     # app.widgets[3] = go to register
     app.widgets.extend([
-        Button(app.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
-                activebackground="#226D22", activeforeground='white',
+        Button(app.window, font='Arial 20', justify='center', background="#3b7f3b", foreground=colour,
+                activebackground="#226D22", activeforeground=colour,
                 text='Log In', command = app.log_in_pressed),
 
         Button(app.window,
         text="Register Now",
         font=("Arial", 12, "bold"),
-        bg="white", fg="#3b7f3b",
-        activebackground="#e6e6e6", activeforeground="#3b7f3b",
+        bg=colour, fg="#3b7f3b",
+        activebackground=colour, activeforeground="#3b7f3b",
         relief="flat",
         borderwidth=0,
         command=app.draw_register_page  # Go to register page
@@ -61,6 +70,13 @@ def draw_front_page(app):
 
 def draw_register_page(app):
     app.clear_screen()
+
+    if app.settings['theme'] == 'Light':
+        colour = 'white'
+        highlight = 'black'
+    else:
+        colour = '#2A2A2E'
+        highlight = 'white'
 
     img = Image.open('images/logo_v2.png')
     imgSmallerResize = img.resize((200,200))
@@ -83,13 +99,13 @@ def draw_register_page(app):
     # app.widgets[3] = confirm password
     # use .get() on the above for the values entered
     app.widgets.extend([
-        Entry(app.window, font='Arial 15', justify='center', borderwidth=0, background='white', relief='solid', 
-              highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2),
-        Entry(app.window, font='Arial 15', justify='center', borderwidth=0, background='white', relief='solid', 
-              highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2),
-        Entry(app.window, font='Arial 15', justify='center', borderwidth=0, background='white', show='\u25CF', relief='solid', 
+        Entry(app.window, font='Arial 15', justify='center', borderwidth=0, background=colour, relief='solid', 
+              highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2, foreground=highlight),
+        Entry(app.window, font='Arial 15', justify='center', borderwidth=0, background=colour, relief='solid', 
+              highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2, foreground=highlight),
+        Entry(app.window, font='Arial 15', justify='center', borderwidth=0, background=colour, show='\u25CF', relief='solid', 
               highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2, foreground='#3b7f3b'),
-        Entry(app.window, font='Arial 15', justify='center', borderwidth=0, background='white', show='\u25CF', relief='solid', 
+        Entry(app.window, font='Arial 15', justify='center', borderwidth=0, background=colour, show='\u25CF', relief='solid', 
               highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2, foreground='#3b7f3b')
     ])
     app.widgets[0].place(x=app.width/2, y=(app.height/2)-50, anchor='center', width=int(app.width*2/3), height=35)
@@ -101,15 +117,15 @@ def draw_register_page(app):
     # app.widgets[4] = register
     # app.widgets[5] = go to log in
     app.widgets.extend([
-        Button(app.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
-                activebackground="#226D22", activeforeground='white',
+        Button(app.window, font='Arial 20', justify='center', background="#3b7f3b", foreground=colour,
+                activebackground="#226D22", activeforeground=colour,
                 text='Register', command=app.register_pressed),
 
         Button(app.window,
         text="Log In",
         font=("Arial", 12, "bold"),
-        bg="white", fg="#3b7f3b",
-        activebackground="#e6e6e6", activeforeground="#3b7f3b",
+        bg=colour, fg="#3b7f3b",
+        activebackground=colour, activeforeground="#3b7f3b",
         relief="flat",
         borderwidth=0,
         command=app.draw_front_page  # Go to login page

@@ -8,7 +8,7 @@ from lib.map import open_map
 from lib.pages import draw_front_page, draw_register_page
 from lib.shopping import draw_shopping_page
 from lib.welcome import draw_welcome_page
-from lib.settings import draw_settings_page, apply_settings
+from lib.settings import draw_settings_page, apply_settings, save_settings
 from lib.markers import draw_markers_page
 
 
@@ -21,6 +21,11 @@ class AppDisplay:
         self.height = height
 
         self.settings = settings
+
+        if self.settings['theme'] == 'Light':
+            colour = 'white'
+        else:
+            colour = '#2A2A2E'
 
         self.itemInfo = []
         self.map_widget = []
@@ -38,7 +43,7 @@ class AppDisplay:
         self.window.geometry(f'{width}x{height}+{window_pos}+10')
 
         # Canvas allows for shapes/images to be drawn to the screen + handles user input
-        self.c = Canvas(self.window, width=width, height=height, bg='white') 
+        self.c = Canvas(self.window, width=width, height=height, bg=colour) 
         self.c.pack()
 
         # lists to hold objects drawn to the screen - cobjects is for stuff on the canvas, widgets is for buttons, labels, etc
@@ -114,6 +119,8 @@ class AppDisplay:
             self.user_id = user_id 
             AppDisplay.username = valueList[0]
             self.open_map()
+            self.settings['saved_user'] = self.username
+            save_settings(self.settings)
         else:
             print("Error logging in...")
             self.cobjects.append(
