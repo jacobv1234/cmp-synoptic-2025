@@ -3,24 +3,25 @@ from tkinter import *
 
 from PIL import Image, ImageTk
 from lib.databaseConnectionFront import registerUser, logInUser
-import subprocess
-import tkintermapview
 import tkinter as tk
-import time
 from lib.map import open_map
 from lib.pages import draw_front_page, draw_register_page
 from lib.shopping import draw_shopping_page
 from lib.welcome import draw_welcome_page
-
+from lib.settings import draw_settings_page, apply_settings
+from lib.markers import draw_markers_page
 
 
 
 class AppDisplay:
     # initialiser function
     username = ""
-    def __init__(self, width = 480, height = 720):
+    def __init__(self, settings, width = 480, height = 720):
         self.width = width
         self.height = height
+
+        self.settings = settings
+
         self.itemInfo = []
         self.map_widget = []
 
@@ -30,6 +31,11 @@ class AppDisplay:
         # name and icon
         self.window.iconbitmap('images/logo_v2.ico')
         self.window.title("Johannesburg Waste Tracker")
+        
+        # open window at the centre of the screen
+        screen_width = self.window.winfo_screenwidth()
+        window_pos = int((screen_width / 2) - (width / 2))
+        self.window.geometry(f'{width}x{height}+{window_pos}+10')
 
         # Canvas allows for shapes/images to be drawn to the screen + handles user input
         self.c = Canvas(self.window, width=width, height=height, bg='white') 
@@ -54,25 +60,26 @@ class AppDisplay:
         self.draw_register_page = lambda: draw_register_page(self)
         self.open_map = lambda: open_map(self)
         self.open_welcome_page = lambda: draw_welcome_page(self)
+        self.open_settings_page = lambda: draw_settings_page(self)
+        self.apply_settings = lambda: apply_settings(self)
 
         
         self.open_welcome_page()
 
+    def open_markers_page(self):
+        self.clear_screen()
+        
+        # Draw the markers page
+        draw_markers_page(self)
+
     def open_shopping_page(self):
         self.clear_screen()
-        # Remove the map widget if it exists
-        if hasattr(self, 'map_widget'):
-            self.map_widget.destroy() # type: ignore
             
         # Draw the shopping page
         draw_shopping_page(self)
 
     def return_to_front_page(self):
         self.clear_screen()
-
-        # Remove the map widget if it exists
-        if hasattr(self, 'map_widget'):
-            self.map_widget.destroy() # type: ignore
 
         # Recreate the front page
         self.draw_front_page()
@@ -84,6 +91,11 @@ class AppDisplay:
             widget.destroy()
         self.cobjects = []
         self.widgets = []
+
+        # Remove the map widget if it exists
+        if self.map_widget != []:
+            self.map_widget.destroy() # type: ignore
+            self.map_widget = []
     
     # button functions
     def log_in_pressed(self):
@@ -93,19 +105,24 @@ class AppDisplay:
             if isinstance(self.widgets[i], Entry):
                 valueList.append(self.widgets[i].get())
         
-        checkLoginDetails = logInUser(valueList)
-        if checkLoginDetails:
-            print("sucessfully logged in!")
-            # take the user to the map
+        # Call logInUser
+        user_id = logInUser(valueList)
+        
+        if user_id:
+            print("Successfully logged in!")
             self.username = valueList[0]
+            self.user_id = user_id 
             AppDisplay.username = valueList[0]
-            open_map(self)
+            self.open_map()
         else:
-            print("error logging in...")
-
-            # display an error message
+            print("Error logging in...")
             self.cobjects.append(
-                self.c.create_text(self.width/2, (self.height/2)+240, fill='red', font='Arial 12', text='The email or password is incorrect.', anchor='n')
+                self.c.create_text(
+                    self.width/2, (self.height/2)+240,
+                    fill='red', font='Arial 12',
+                    text='The email or password is incorrect.',
+                    anchor='n'
+                )
             )
 
 
