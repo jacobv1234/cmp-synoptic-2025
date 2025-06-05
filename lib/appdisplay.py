@@ -179,18 +179,31 @@ class AppDisplay:
         print(itemsSelected)
         print(priceTotal)
 
-        shopBasketFrame = Frame(self.window, bg="white")
-        shopBasketFrame.place(relx=0.50, rely=0.50, anchor='center')
-        self.widgets.append(shopBasketFrame)
+        if hasattr(self, "shopBasketFrame"):
+            for widget in self.shopBasketFrame.winfo_children():
+                    widget.destroy()
+        
+        if len(itemsSelected) <= 0:
+            return
+        
+        self.shopBasketFrame = Frame(self.window, bg="white")            
+        self.shopBasketFrame.place(relx=0.50, rely=0.50, anchor='center')
+        self.widgets.append(self.shopBasketFrame)
 
-        itemListLabel = Label(shopBasketFrame, text=f"YOUR CHECKOUT ITEMS: {itemsSelected}", font=('Arial', 14), bg='white')
+        itemListLabel = Label(self.shopBasketFrame, text=f"YOUR CHECKOUT ITEMS: {itemsSelected}", font=('Arial', 14), bg='white')
         itemListLabel.pack(side="top")
         self.widgets.append(itemListLabel)
 
-        totalPriceLabel = Label(shopBasketFrame, text=f"TOTAL COST: {priceTotal} TP", font=('Arial', 14), bg='white')
+        totalPriceLabel = Label(self.shopBasketFrame, text=f"TOTAL COST: {priceTotal} TP", font=('Arial', 14), bg='white')
         totalPriceLabel.pack(side="top")
         self.widgets.append(totalPriceLabel)
 
-        buyBtn = Button(shopBasketFrame, font='Arial 14', justify='center', background="#3b7f3b", foreground='white',activebackground="#226D22", activeforeground='white',text='Buy Item')
+        buyBtn = Button(self.shopBasketFrame, font='Arial 14', justify='center', background="#3b7f3b", foreground='white',activebackground="#226D22", activeforeground='white',text='Buy Item')
         buyBtn.pack(side="top")
         self.widgets.append(buyBtn)
+        
+          
+    
+
+            
+
