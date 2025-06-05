@@ -8,7 +8,7 @@ from lib.map import open_map
 from lib.pages import draw_front_page, draw_register_page
 from lib.shopping import draw_shopping_page
 from lib.welcome import draw_welcome_page
-from lib.settings import draw_settings_page
+from lib.settings import draw_settings_page, apply_settings
 from lib.markers import draw_markers_page
 
 
@@ -16,9 +16,12 @@ from lib.markers import draw_markers_page
 class AppDisplay:
     # initialiser function
     username = ""
-    def __init__(self, width = 480, height = 720):
+    def __init__(self, settings, width = 480, height = 720):
         self.width = width
         self.height = height
+
+        self.settings = settings
+
         self.itemInfo = []
         self.map_widget = []
 
@@ -58,6 +61,7 @@ class AppDisplay:
         self.open_map = lambda: open_map(self)
         self.open_welcome_page = lambda: draw_welcome_page(self)
         self.open_settings_page = lambda: draw_settings_page(self)
+        self.apply_settings = lambda: apply_settings(self)
 
         
         self.open_welcome_page()

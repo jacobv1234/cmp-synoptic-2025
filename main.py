@@ -21,9 +21,11 @@ except ModuleNotFoundError:
 
 # local imports
 from lib.appdisplay import AppDisplay
+from lib.settings import load_settings
 
+settings = load_settings()
+screen = AppDisplay(settings)
 
-screen = AppDisplay()
 screen.window.mainloop() # run
 
 
