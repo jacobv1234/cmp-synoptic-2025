@@ -3,13 +3,28 @@ import tkinter as tk
 from lib.appdisplay import AppDisplay
 
 @pytest.fixture
-# Fixture that mocks a tkinterface window.
+# Fixture that mocks a tkinter GUI
 def display(mocker):
-    mocker.patch("tkinter.Tk")
-    mocker.patch("tkinter.Frame")
-    mocker.patch("tkinter.Canvas")
 
-    return AppDisplay()
+    # Prevent draw_front_page from executing its real logic during init
+    mocker.patch("lib.appdisplay.draw_front_page")
+
+    mocker.patch("lib.appdisplay.Tk", return_value = mocker.MagicMock(name="MockTk"))
+    mocker.patch("lib.appdisplay.Frame", return_value = mocker.MagicMock(name="MockFrame"))
+    mocker.patch("lib.appdisplay.Canvas", return_value = mocker.MagicMock(name="MockCanvas"))
+    mocker.patch("lib.appdisplay.ImageTk.PhotoImage", return_value=mocker.MagicMock(name="MockPhotoImage"))
+
+    mockDisplay = AppDisplay()
+
+    # Patch c with create_text and delete
+    mockDisplay.c.create_text = mocker.MagicMock(name="create_text", return_value="mockTextId")
+    mockDisplay.c.delete = mocker.MagicMock(name="delete")
+
+    # default empty cobj and widgets lists
+    mockDisplay.cobjects = []
+    mockDisplay.widgets = []
+
+    return mockDisplay
 
 # Intended behaviour: __init__ should be setting display.running as "true"
 #                     display.width and display.height should be set to 480 and 720 respectively
@@ -22,8 +37,8 @@ def test_display_init(display):
 #                     widgets array should be empty
 def test_clear_screen(display, mocker):
     # Set additional mockers
-    mock_cobj = mocker.Mock()
-    mock_widget =  mocker.Mock()
+    mock_cobj = "mock_cobj"
+    mock_widget =  mocker.MagicMock(name="mock_widget")
     # Append arrays with mock objects
     display.cobjects = [mock_cobj]
     display.widgets = [mock_widget]
@@ -38,13 +53,12 @@ def test_clear_screen(display, mocker):
 # Intended behaviour: checks that we log in with the valuelist containing an entry "helloworld"
 def test_log_in_pressed(display, mocker):
 
-    # Set additional mockers
-
     # isinstance expects an entry so we mock it
-    entry_mocker = mocker.Mock(spec=tk.Entry)
+    entry_mocker = mocker.MagicMock(spec=tk.Entry)
     entry_mocker.get.return_value = "helloworld"
     display.widgets = [entry_mocker]
-    mocker.patch("lib.appdisplay.open_map")
+    
+    open_map_mocker = mocker.patch("lib.appdisplay.open_map")
 
     # Test with loginUser set to True
     mocker_log_in = mocker.patch("lib.appdisplay.logInUser", return_value = True)
@@ -54,20 +68,29 @@ def test_log_in_pressed(display, mocker):
 
     # asserts
     mocker_log_in.assert_called_once_with(["helloworld"])
+    # assert open_map is called
+    open_map_mocker.assert_called_once_with(display)
 
 # Setter function for register_test, both for success and failures
 def setter_register_test(display, mocker, r):
-    # Mock entry
-    entry_mocker = mocker.Mock(spec=tk.Entry)
-    entry_mocker.get.return_value = "test@pleasework.com"
-    display.widgets = [entry_mocker]
+    # Mock entries for user email and password
+    entry_username_mocker = mocker.MagicMock(spec=tk.Entry)
+    entry_username_mocker.get.return_value = "testusername"
+    entry_email_mocker = mocker.MagicMock(spec=tk.Entry)
+    entry_email_mocker.get.return_value = "test@pleasework.com"
+    entry_password_mocker = mocker.MagicMock(spec=tk.Entry)
+    entry_password_mocker.get.return_value = "password"
+    entry_confirm_password_mocker = mocker.MagicMock(spec=tk.Entry)
+    entry_confirm_password_mocker.get.return_value = "password"
+    # assign entry values
+    display.widgets = [entry_username_mocker, entry_email_mocker, entry_password_mocker, entry_confirm_password_mocker]
 
     # Set the return value of registration (true/false)
-    register_mocker = mocker.patch("lib.databaseConnectionFront.registerUser", return_value = r)
+    register_mocker = mocker.patch("lib.appdisplay.registerUser", return_value = r)
     # Patch draw_front_page
     front_page_mocker  = mocker.patch.object(display, "draw_front_page")
 
-    return entry_mocker, register_mocker, front_page_mocker
+    return display.widgets, register_mocker, front_page_mocker
 
 # Intended behaviour: we register with "test@pleasework.com"
 #                     draw_front_page is called properly
@@ -80,9 +103,8 @@ def test_register_pressed_true(display, mocker):
     display.register_pressed()
 
     # Asserts
-    register_mocker.assert_called_once_with(["test@pleasework.com"])
+    register_mocker.assert_called_once_with(["testusername","test@pleasework.com","password","password"])
     front_page_mocker.assert_called_once()
-    entry_mocker.insert.assert_called_once_with(0, "test@pleasework.com")
 
 # Intended behaviour: a mock error is created in display.cobjects
 def test_register_pressed_false(display, mocker):
@@ -101,15 +123,12 @@ def test_register_pressed_false(display, mocker):
 #                     Shopping page drawn
 def test_open_shopping_page_map(display, mocker):
     # Patch mock draw_shopping_page
-    mock_shopping_page = mocker.patch("lib.shopping.draw_shopping_page")
+    mock_shopping_page = mocker.patch("lib.appdisplay.draw_shopping_page")
     # Clear screen mockers
-    mock_cobj = mocker.Mock()
-    mock_widget =  mocker.Mock()
-    display.cobjects = [mock_cobj]
-    display.widgets = [mock_widget]
+    display.cobjects = ["cobj"]
+    display.widgets = [mocker.MagicMock(name="widget_mocker")]
     # Map mockers
-    mocker_map = mocker.Mock()
-    display.map_widget = mocker_map
+    display.map_widget = mocker.MagicMock(name="map_widget_mocker")
 
     # Call open_shopping_page
     display.open_shopping_page()
@@ -118,16 +137,16 @@ def test_open_shopping_page_map(display, mocker):
     assert display.cobjects == []
     assert display.widgets == []
     # Assert map_widget destroy called
-    mocker_map.destroy.assert_called_once()
+    display.map_widget.destroy.assert_called_once()
     # Assert draw_shopping_page called
     mock_shopping_page.assert_called_once_with(display)
 
 # Intended behaviour: Shopping page drawn
 def test_open_shopping_page(display, mocker):
     # Patch mock draw_shopping_page
-    mock_shopping_page = mocker.patch("lib.shopping.draw_shopping_page")
-    display.cobjects == []
-    display.widgets == []
+    mock_shopping_page = mocker.patch("lib.appdisplay.draw_shopping_page")
+    display.cobjects = []
+    display.widgets = []
     # Call open_shopping_page
     display.open_shopping_page()
     # Assert draw_shopping_page called
@@ -136,15 +155,12 @@ def test_open_shopping_page(display, mocker):
 def test_return_to_front_page(display, mocker):
     # Patch mock draw_front_page
     mock_front_page = mocker.patch.object(display, "draw_front_page")
-    # Clear screen mockers
-    mock_cobj = mocker.Mock()
-    mock_widget =  mocker.Mock()
+    # mockers
+    mock_cobj = ["cobj"]
+    mock_widget =  mocker.MagicMock(name="widget_mocker")
+    display.map_widget = mocker.MagicMock(name="map_widget_mocker")
     display.cobjects = [mock_cobj]
     display.widgets = [mock_widget]
-    # Map mockers
-    mocker_map = mocker.Mock()
-    display.map_widget = mocker_map
-
     # Call open_shopping_page
     display.return_to_front_page()
 
@@ -152,6 +168,6 @@ def test_return_to_front_page(display, mocker):
     assert display.cobjects == []
     assert display.widgets == []
     # Assert map_widget destroy called
-    mocker_map.destroy.assert_called_once()
+    display.map_widget.destroy.assert_called_once()
     # Assert draw_shopping_page called
     mock_front_page.assert_called_once()
