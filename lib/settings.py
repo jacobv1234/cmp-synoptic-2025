@@ -119,6 +119,6 @@ def apply_settings(self):
     if self.settings['theme'] == 'Light':
         self.c.configure(bg='white')
     else:
-        self.c.configure(bg='black')
+        self.c.configure(bg='#2A2A2E')
 
     self.open_map()
