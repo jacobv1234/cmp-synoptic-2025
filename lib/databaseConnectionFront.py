@@ -152,3 +152,26 @@ def getMarkerCountForUser(user_id):
     finally:
         cur.close()
 
+def purchaseSubtraction(totalShopSum, username):
+    cur = conn.cursor()
+    try:
+        data = (username,)
+        query = "SELECT userTrashPoints FROM User WHERE username = %s"
+        cur.execute(query, data)
+        userTP = cur.fetchone()[0]
+        print(userTP)
+        newTP = (userTP-totalShopSum)
+        if newTP <0:
+            return False
+        updateData = (newTP, str(username))
+        print(f"new tp = {newTP} username = {str(username)}")
+        updateQuery = "UPDATE User SET userTrashPoints = %s WHERE username = %s"
+        cur.execute(updateQuery, updateData)
+        conn.commit()
+        return True
+    
+    except Exception as e:
+        print(e)
+        return 0
+    finally:
+        cur.close()

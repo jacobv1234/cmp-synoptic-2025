@@ -2,7 +2,7 @@
 from tkinter import *
 
 from PIL import Image, ImageTk
-from lib.databaseConnectionFront import registerUser, logInUser
+from lib.databaseConnectionFront import registerUser, logInUser, purchaseSubtraction
 import tkinter as tk
 from lib.map import open_map
 from lib.pages import draw_front_page, draw_register_page
@@ -19,6 +19,7 @@ class AppDisplay:
     def __init__(self, settings, width = 480, height = 720):
         self.width = width
         self.height = height
+        self.higherFrame = None
 
         self.settings = settings
 
@@ -164,6 +165,41 @@ class AppDisplay:
     def close(self):
         self.window.destroy()
         self.running = False
+
+    def closePopup(self):
+        if self.higherFrame:
+            self.higherFrame.destroy()
+            self.higherFrame = None
+            self.open_shopping_page()
+
+    def buyItem(self, priceTotal):
+        if self.higherFrame:
+            return
+        
+        self.higherFrame = tk.Frame(self.window, bg="gray50")
+        self.higherFrame.place(x=0, y=0, relwidth=1, relheight=1)
+
+        self.popupPurchased = tk.Frame(self.higherFrame, bg="white", relief="raised", bd=2)
+        self.popupPurchased.place(relx=0.5, rely=0.5, anchor="center", width=500, height=200)
+
+        closePopup = tk.Button(self.popupPurchased, text="X", command=self.closePopup, font=("Arial", 15, "bold"), foreground="black", bd=0)
+        closePopup.place(x=270, y=5, width=25, height=25)
+
+        
+        self.itemPurchaseFrame = Frame(self.popupPurchased, bg="white")            
+        self.itemPurchaseFrame.place(relx=0.50, rely=0.75, anchor='center')
+        self.widgets.append(self.itemPurchaseFrame)
+
+        subtractCost = purchaseSubtraction(priceTotal, AppDisplay.username)
+        if subtractCost and hasattr(self, "itemPurchaseFrame"):
+            youBoughtLabel = Label(self.itemPurchaseFrame, text=f"Your purchase was successful, thanks for taking care of our city!", font=('Arial', 10), bg='white', foreground="#4F8400")
+            youBoughtLabel.pack(side="bottom")
+            self.widgets.append(youBoughtLabel)
+        elif not subtractCost:
+            youBoughtLabel = Label(self.itemPurchaseFrame, text=f"You don't have enough TP (Trash Points) to buy your selected items!", font=('Arial', 10), bg='white', foreground="#01593C")
+            youBoughtLabel.pack(side="bottom")
+            self.widgets.append(youBoughtLabel)
+
     
     def getChecked(self):
         itemsSelected = []
@@ -181,10 +217,6 @@ class AppDisplay:
         print(itemsSelected)
         print(priceTotal)
 
-        if hasattr(self, "shopBasketFrame") and self.shopBasketFrame.winfo_exists:
-            for widget in self.shopBasketFrame.winfo_children():
-                    widget.destroy()
-
         
         if len(itemsSelected) <= 0:
             if hasattr(self, "shopBasketFrame") and self.shopBasketFrame.winfo_exists:
@@ -196,7 +228,7 @@ class AppDisplay:
         self.shopBasketFrame.place(relx=0.50, rely=0.50, anchor='center')
         self.widgets.append(self.shopBasketFrame)
 
-        itemListLabel = Label(self.shopBasketFrame, text=f"YOUR CHECKOUT ITEMS: {itemsSelected}", font=('Arial', 14), bg='white')
+        itemListLabel = Label(self.shopBasketFrame, text=f"YOUR CHECKOUT ITEMS: {str(itemsSelected)[1:-1]}", font=('Arial', 14), bg='white')
         itemListLabel.pack(side="top")
         self.widgets.append(itemListLabel)
 
@@ -204,7 +236,7 @@ class AppDisplay:
         totalPriceLabel.pack(side="top")
         self.widgets.append(totalPriceLabel)
 
-        buyBtn = Button(self.shopBasketFrame, font='Arial 14', justify='center', background="#3b7f3b", foreground='white',activebackground="#226D22", activeforeground='white',text='Buy Item')
+        buyBtn = Button(self.shopBasketFrame, font='Arial 14', justify='center', background="#3b7f3b", foreground='white',activebackground="#226D22", activeforeground='white',text='Buy Item', command=lambda:self.buyItem(priceTotal))
         buyBtn.pack(side="top")
         self.widgets.append(buyBtn)
         
