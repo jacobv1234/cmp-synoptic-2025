@@ -176,14 +176,14 @@ class AppDisplay:
         if self.higherFrame:
             return
         
-        self.higherFrame = tk.Frame(self.window, bg="gray50")
+        self.higherFrame = tk.Frame(self.window, bg="#8F9779")
         self.higherFrame.place(x=0, y=0, relwidth=1, relheight=1)
 
         self.popupPurchased = tk.Frame(self.higherFrame, bg="white", relief="raised", bd=2)
         self.popupPurchased.place(relx=0.5, rely=0.5, anchor="center", width=500, height=200)
 
-        closePopup = tk.Button(self.popupPurchased, text="X", command=self.closePopup, font=("Arial", 15, "bold"), foreground="black", bd=0)
-        closePopup.place(x=270, y=5, width=25, height=25)
+        closePopup = tk.Button(self.popupPurchased, text="X", command=self.closePopup, font=("Arial", 25, "bold"), foreground="black", bd=0)
+        closePopup.place(x=250, y=5, width=25, height=25)
 
         
         self.itemPurchaseFrame = Frame(self.popupPurchased, bg="white")            
