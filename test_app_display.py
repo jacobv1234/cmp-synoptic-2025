@@ -128,7 +128,8 @@ def test_return_to_front_page(display, mocker):
     # Patch mock draw_front_page
     mock_front_page = mocker.patch.object(display, "draw_front_page")
     # mockers
-    display.map_widget = mocker.MagicMock(name="map_widget_mocker")
+    mock_map_widget = mocker.MagicMock(name="mock_map_widget")
+    display.map_widget = mock_map_widget
     # Call open_shopping_page
     display.return_to_front_page()
 
@@ -136,7 +137,7 @@ def test_return_to_front_page(display, mocker):
     assert display.cobjects == []
     assert display.widgets == []
     # Assert map_widget destroy called
-    display.map_widget.destroy.assert_called_once()
+    mock_map_widget.destroy.assert_called_once()
     # Assert draw_shopping_page called
     mock_front_page.assert_called_once()
 
