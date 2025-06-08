@@ -10,6 +10,7 @@ from lib.shopping import draw_shopping_page
 from lib.welcome import draw_welcome_page
 from lib.settings import draw_settings_page, apply_settings, save_settings
 from lib.markers import draw_markers_page
+from lib.profile import draw_profile_page
 
 
 
@@ -89,6 +90,12 @@ class AppDisplay:
 
         # Recreate the front page
         self.draw_front_page()
+
+    def open_profile_page(self):
+        self.clear_screen()
+
+        #Draw the user profile page
+        draw_profile_page(self)
 
     def clear_screen(self):
         for object in self.cobjects:
