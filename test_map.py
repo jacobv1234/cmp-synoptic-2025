@@ -43,6 +43,9 @@ def set_mock_map(mocker):
 
     return mock_map
 
+# Generic unit test for open_map
+# Intended behaviour: position, zoom, and marker are set appropriately
+#                     display.widgets > 0
 def test_open(mock_display, mocker):
     # Set mock map
     mock_map = set_mock_map(mocker)
@@ -56,3 +59,18 @@ def test_open(mock_display, mocker):
 
     # Check widgets added
     assert len(mock_display.widgets) > 0
+
+# Intended behaviour: when theme is Dark, label background colour should change to #2A2A2E
+def test_dark_theme(mock_display, mocker):
+    # Set mock map
+    set_mock_map(mocker)
+    # set theme to dark
+    mock_display.settings["theme"] = "Dark"
+    mock_label = mocker.patch("lib.map.Label", return_value=mocker.MagicMock())
+
+    open_map(mock_display)
+
+    # Unpack arguments for mock_label, we only care about background colour though
+    _, kwargs = mock_label.call_args
+    # Asserts
+    assert kwargs["bg"] == "#2A2A2E"
