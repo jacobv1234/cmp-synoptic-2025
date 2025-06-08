@@ -176,3 +176,35 @@ def test_update(display, mocker):
     display.update()
 
     mock_window.update.assert_called_once()
+
+# Intended behaviour: mock_window.destroy is called once
+#                     display.isrunning set to false
+def test_close(display, mocker):
+    mock_window = mocker.MagicMock()
+    display.window = mock_window
+    # Set running as true
+    display.running = True
+
+    # Call display.close()
+    display.close()
+
+    mock_window.destroy.assert_called_once()
+    assert display.running is False
+
+# Intended behaviour: if check in closePopup succeeds
+#                     display.higherFrame is destroyed
+#                     open_shopping_page is called.
+def test_closePopup(display, mocker):
+    # create mockers
+    mock_open_shopping_page = mocker.patch.object(display, "open_shopping_page")
+    mock_frame = mocker.MagicMock()
+    display.higherFrame = mock_frame
+
+    # call closePopup
+    display.closePopup()
+
+    # asserts
+    mock_frame.destroy.assert_called_once()
+
+    assert display.higherFrame is None
+    mock_open_shopping_page.assert_called_once()
