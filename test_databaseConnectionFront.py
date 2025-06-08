@@ -72,7 +72,7 @@ def test_registerUser_failure(mock_db, mocker):
 # Intended behaviour: mock user with the id of 11 successfully logs in
 def test_logInUser(mock_db, mocker):
     # Call fixture
-    mock_conection, mock_cursor = mock_db
+    mock_connection, mock_cursor = mock_db
     # patching verify so it returns true
     mocker.patch.object(db, "verify", return_value = True)
     # userID and password for verify
@@ -81,3 +81,65 @@ def test_logInUser(mock_db, mocker):
     result = db.logInUser(("testUser", "password"))
     # Assert
     assert result == 11
+
+# Intended behaviour: the returned current trash point value is 123
+def test_getCurrentUserTP(mock_db, mocker):
+    # Call fixture
+    mock_connection, mock_cursor = mock_db
+    mock_cursor.fetchone.return_value = (123,)
+
+    # Call getCurrentUserTP
+    result = db.getCurrentUserTP("testUser")
+    # Asserts
+    assert result == "123"
+
+# Intended behaviour: result matches the return_values from mock_cursor
+def test_getAllShopItems(mock_db, mocker):
+    # Call fixture
+    mock_connection, mock_cursor = mock_db
+    mock_cursor.fetchall.return_value = [("500 Cigarettes",), ("10000 very angry dwarves",)]
+
+    # Call getAllShopItems
+    result = db.getAllShopItems()
+    # Asserts
+    assert result == ["500 Cigarettes", "10000 very angry dwarves"]
+
+# Intended behaviour: result matches the return_values from mock_cursor
+def test_getAllShopPrices(mock_db, mocker):
+    # Call fixture
+    mock_connection, mock_cursor = mock_db
+    mock_cursor.fetchall.return_value = [(1,), (9999,)]
+
+    # Call getAllShopPrices
+    result = db.getAllShopPrices()
+    # Asserts
+    assert result == [1, 9999]
+
+# Intended behaviour: the returned marker count is 6
+def test_getMarkerCountForUser(mock_db, mocker):
+    # Call fixture
+    mock_connection, mock_cursor = mock_db
+    mock_cursor.fetchone.return_value = (6,)
+
+    # Call getMarkerCountForUser
+    result = db.getMarkerCountForUser("testUser")
+    # Asserts
+    assert result == 6
+
+# Intended behaviour: subtraction is successful and result is true
+def test_purchaseSubtraction_success(mock_db, mocker):
+    # Call fixture
+    mock_connection, mock_cursor = mock_db
+    mock_cursor.fetchone.return_value = (100,)
+
+    result = db.purchaseSubtraction(99, "username")
+    assert result is True
+
+# Intended behaviour: subtraction is successful and result is false
+def test_purchaseSubtraction_failure(mock_db, mocker):
+    # Call fixture
+    mock_connection, mock_cursor = mock_db
+    mock_cursor.fetchone.return_value = (1,)
+
+    result = db.purchaseSubtraction(50, "username")
+    assert result is False
