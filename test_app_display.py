@@ -31,6 +31,11 @@ def display(mocker):
     # default empty cobj and widgets lists
     mockDisplay.cobjects = []
     mockDisplay.widgets = []
+    # mocks for widgets and cobjs
+    mock_widget = mocker.MagicMock(name="mock_widget")
+    display.widgets = [mock_widget]
+    mock_cobj = "mock_cobj"
+    display.cobjects = [mock_cobj]
 
     return mockDisplay
 
@@ -44,13 +49,6 @@ def test_display_init(display):
 # Intended behaviour: cobjects array should be empty
 #                     widgets array should be empty
 def test_clear_screen(display, mocker):
-    # Set additional mockers
-    mock_cobj = "mock_cobj"
-    mock_widget =  mocker.MagicMock(name="mock_widget")
-    # Append arrays with mock objects
-    display.cobjects = [mock_cobj]
-    display.widgets = [mock_widget]
-
     # Call clear_screen
     display.clear_screen()
     
@@ -130,11 +128,7 @@ def test_return_to_front_page(display, mocker):
     # Patch mock draw_front_page
     mock_front_page = mocker.patch.object(display, "draw_front_page")
     # mockers
-    mock_cobj = ["cobj"]
-    mock_widget =  mocker.MagicMock(name="widget_mocker")
     display.map_widget = mocker.MagicMock(name="map_widget_mocker")
-    display.cobjects = [mock_cobj]
-    display.widgets = [mock_widget]
     # Call open_shopping_page
     display.return_to_front_page()
 
@@ -151,8 +145,6 @@ def test_return_to_front_page(display, mocker):
 def test_open_shopping_page(display, mocker):
     # Patch mock draw_shopping_page
     mock_shopping_page = mocker.patch("lib.appdisplay.draw_shopping_page")
-    display.cobjects = ["cobj"]
-    display.widgets = ["widget"]
     # Call open_shopping_page
     display.open_shopping_page()
     # Assert clearing screen worked
@@ -165,8 +157,6 @@ def test_open_shopping_page(display, mocker):
 def test_open_markers_page(display, mocker):
     # Patch mock draw_markers_page
     mock_markers_page = mocker.patch("lib.appdisplay.draw_markers_page")
-    display.cobjects = ["cobj"]
-    display.widgets = ["widget"]
     # Call open_markers_page
     display.open_markers_page()
     # Assert clearing screen worked
