@@ -165,3 +165,14 @@ def test_open_markers_page(display, mocker):
     assert display.widgets == []
     # Assert draw_markers_page called
     mock_markers_page.assert_called_once_with(display)
+
+# Intended behaviour: update is called once
+def test_update(display, mocker):
+    # Mock a window
+    mock_window = mocker.MagicMock()
+    # Set window to mock
+    display.window = mock_window
+    # Call update
+    display.update()
+
+    mock_window.update.assert_called_once()
