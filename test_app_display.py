@@ -14,7 +14,15 @@ def display(mocker):
     mocker.patch("lib.appdisplay.Canvas", return_value = mocker.MagicMock(name="MockCanvas"))
     mocker.patch("lib.appdisplay.ImageTk.PhotoImage", return_value=mocker.MagicMock(name="MockPhotoImage"))
 
-    mockDisplay = AppDisplay()
+    # mock settings
+    MockSettings={
+    "language": "English",
+    "theme": "Light",
+    "textsize": "Normal",
+    "saved_user": ""
+    }
+
+    mockDisplay = AppDisplay(settings=MockSettings)
 
     # Patch c with create_text and delete
     mockDisplay.c.create_text = mocker.MagicMock(name="create_text", return_value="mockTextId")
@@ -118,40 +126,6 @@ def test_register_pressed_false(display, mocker):
     ## Assert
     assert "mockError" in display.cobjects
 
-# Intended behaviour: Clear screen called successfully,
-#                     Map widget destroyed,
-#                     Shopping page drawn
-def test_open_shopping_page_map(display, mocker):
-    # Patch mock draw_shopping_page
-    mock_shopping_page = mocker.patch("lib.appdisplay.draw_shopping_page")
-    # Clear screen mockers
-    display.cobjects = ["cobj"]
-    display.widgets = [mocker.MagicMock(name="widget_mocker")]
-    # Map mockers
-    display.map_widget = mocker.MagicMock(name="map_widget_mocker")
-
-    # Call open_shopping_page
-    display.open_shopping_page()
-
-    # Assert screen cleared
-    assert display.cobjects == []
-    assert display.widgets == []
-    # Assert map_widget destroy called
-    display.map_widget.destroy.assert_called_once()
-    # Assert draw_shopping_page called
-    mock_shopping_page.assert_called_once_with(display)
-
-# Intended behaviour: Shopping page drawn
-def test_open_shopping_page(display, mocker):
-    # Patch mock draw_shopping_page
-    mock_shopping_page = mocker.patch("lib.appdisplay.draw_shopping_page")
-    display.cobjects = []
-    display.widgets = []
-    # Call open_shopping_page
-    display.open_shopping_page()
-    # Assert draw_shopping_page called
-    mock_shopping_page.assert_called_once_with(display)
-
 def test_return_to_front_page(display, mocker):
     # Patch mock draw_front_page
     mock_front_page = mocker.patch.object(display, "draw_front_page")
@@ -171,3 +145,32 @@ def test_return_to_front_page(display, mocker):
     display.map_widget.destroy.assert_called_once()
     # Assert draw_shopping_page called
     mock_front_page.assert_called_once()
+
+
+# Intended behaviour: Shopping page drawn
+def test_open_shopping_page(display, mocker):
+    # Patch mock draw_shopping_page
+    mock_shopping_page = mocker.patch("lib.appdisplay.draw_shopping_page")
+    display.cobjects = ["cobj"]
+    display.widgets = ["widget"]
+    # Call open_shopping_page
+    display.open_shopping_page()
+    # Assert clearing screen worked
+    assert display.cobjects == []
+    assert display.widgets == []
+    # Assert draw_shopping_page called
+    mock_shopping_page.assert_called_once_with(display)
+
+# Intended behaviour: Markers page drawn
+def test_open_markers_page(display, mocker):
+    # Patch mock draw_markers_page
+    mock_markers_page = mocker.patch("lib.appdisplay.draw_markers_page")
+    display.cobjects = ["cobj"]
+    display.widgets = ["widget"]
+    # Call open_markers_page
+    display.open_markers_page()
+    # Assert clearing screen worked
+    assert display.cobjects == []
+    assert display.widgets == []
+    # Assert draw_markers_page called
+    mock_markers_page.assert_called_once_with(display)
