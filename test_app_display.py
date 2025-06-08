@@ -9,10 +9,10 @@ def display(mocker):
     # Prevent draw_front_page from executing its real logic during init
     mocker.patch("lib.appdisplay.draw_front_page")
 
-    mocker.patch("lib.appdisplay.Tk", return_value = mocker.MagicMock(name="MockTk"))
-    mocker.patch("lib.appdisplay.Frame", return_value = mocker.MagicMock(name="MockFrame"))
-    mocker.patch("lib.appdisplay.Canvas", return_value = mocker.MagicMock(name="MockCanvas"))
-    mocker.patch("lib.appdisplay.ImageTk.PhotoImage", return_value=mocker.MagicMock(name="MockPhotoImage"))
+    mocker.patch("lib.appdisplay.Tk", return_value = mocker.MagicMock(name="mock_tk"))
+    mocker.patch("lib.appdisplay.Frame", return_value = mocker.MagicMock(name="mock_frame"))
+    mocker.patch("lib.appdisplay.Canvas", return_value = mocker.MagicMock(name="mock_canvas"))
+    mocker.patch("lib.appdisplay.ImageTk.PhotoImage", return_value=mocker.MagicMock(name="mock_photo_image"))
 
     # mock settings
     MockSettings={
@@ -272,3 +272,35 @@ def test_buy_item_fail(display, mocker):
     assert mock_label.pack.called
     assert display.higherFrame is not None
     assert len(display.widgets) > 0
+
+
+def test_getChecked(display, mocker):
+    # Set mockers
+    mock_frame = mocker.MagicMock()
+    mock_label = mocker.MagicMock()
+    mock_button = mocker.MagicMock()
+    # have to patch frame again so that we can populate with a return value
+    mocker.patch("lib.appdisplay.Frame", return_value=mock_frame)
+    mocker.patch("lib.appdisplay.Label", return_value=mock_label)
+    mocker.patch("lib.appdisplay.Button", return_value=mock_button)
+    isCheckedTrue = mocker.MagicMock()
+    isCheckedFalse = mocker.MagicMock()
+    # Set mocker returns
+    isCheckedTrue.get.return_value = True
+    isCheckedFalse.get.return_value = False
+
+    # Populate display.itemInfo with example data
+    display.itemInfo = [
+        [isCheckedTrue, "Legendary Wooden Plank of Power", 64],
+        [isCheckedFalse, "2 liters of kilju", 42],
+    ]
+
+    display.window = mocker.MagicMock()
+    display.widgets = []
+
+    display.getChecked()
+
+    assert mock_frame.place.called
+    assert mock_label.pack.called
+    assert mock_button.pack.called
+    assert len(display.widgets) >= 3
