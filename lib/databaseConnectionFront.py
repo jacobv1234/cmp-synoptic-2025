@@ -178,3 +178,51 @@ def purchaseSubtraction(totalShopSum, username):
         return 0
     finally:
         cur.close()
+
+def getUserIcon(username):
+    cur = conn.cursor()
+    try:
+        data = (username,)
+        query = "SELECT userPic FROM User WHERE username = %s"
+        cur.execute(query, data)
+        userPic = cur.fetchone()[0]
+        return userPic
+
+    
+    except Exception as e:
+        print(e)
+        return 0
+    finally:
+        cur.close()
+
+def getUserTrashFound(username):
+    cur = conn.cursor()
+    try:
+        data = (username,)
+        query = "SELECT trashFound FROM User WHERE username = %s"
+        cur.execute(query, data)
+        userTrashFound = cur.fetchone()[0]
+        return userTrashFound
+
+    
+    except Exception as e:
+        print(e)
+        return 0
+    finally:
+        cur.close()
+
+def getUserCleaned(username):
+    cur = conn.cursor()
+    try:
+        data = (username,)
+        query = "SELECT trashCleaned FROM User WHERE username = %s"
+        cur.execute(query, data)
+        userTrashCleaned = cur.fetchone()[0]
+        return userTrashCleaned
+
+    
+    except Exception as e:
+        print(e)
+        return 0
+    finally:
+        cur.close()
