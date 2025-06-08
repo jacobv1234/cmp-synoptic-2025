@@ -208,3 +208,14 @@ def test_closePopup(display, mocker):
 
     assert display.higherFrame is None
     mock_open_shopping_page.assert_called_once()
+
+# Intended behaviour: closePopup runs without an error
+#                     higherFrame is none
+def test_close_popup_no_popup(display):
+
+    display.higherFrame = None
+
+    # call closePopup
+    display.closePopup()
+
+    assert display.higherFrame is None
