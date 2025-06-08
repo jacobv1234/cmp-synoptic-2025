@@ -273,7 +273,9 @@ def test_buy_item_fail(display, mocker):
     assert display.higherFrame is not None
     assert len(display.widgets) > 0
 
-
+# Intended behaviour: isCheckedTrue is selected, isCheckedFalse is not
+#                     display.widgets is >= 3
+#                     place and pack calls succeed
 def test_getChecked(display, mocker):
     # Set mockers
     mock_frame = mocker.MagicMock()
@@ -298,9 +300,30 @@ def test_getChecked(display, mocker):
     display.window = mocker.MagicMock()
     display.widgets = []
 
+    # call display.getChecked
     display.getChecked()
 
+    # asserts
     assert mock_frame.place.called
     assert mock_label.pack.called
     assert mock_button.pack.called
     assert len(display.widgets) >= 3
+
+# Intended behaviour: isCheckedFalse is not selected
+#                     the shopBasketFrame is destroyed
+#                     display does not have attribute "shopBasketFrame"
+def test_getChecked_no_items(display, mocker):
+    isCheckedFalse = mocker.MagicMock()
+    isCheckedFalse.get.return_value = False
+    display.itemInfo = [[isCheckedFalse, "Door Stuck", 0]]
+
+    mock_shopBasketFrame = mocker.MagicMock()
+    mock_shopBasketFrame.winfo_exists = True
+    display.shopBasketFrame = mock_shopBasketFrame
+
+    # Call display.getChecked
+    display.getChecked()
+
+    # Asserts
+    mock_shopBasketFrame.destroy.assert_called_once()
+    assert not hasattr(display, "shopBasketFrame")
