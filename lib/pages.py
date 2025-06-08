@@ -4,30 +4,49 @@ from PIL import Image, ImageTk
 def draw_front_page(app):
     app.clear_screen()
 
+    if app.settings['theme'] == 'Light':
+        colour = 'white'
+        highlight = 'black'
+    else:
+        colour = "#2A2A2E"
+        highlight = 'white'
+    
+    if app.settings['textsize'] == 'Normal':
+        textsize = 15
+        smalltext = 12
+        bigtext = 20
+    else:
+        textsize = 20
+        smalltext = 20
+        bigtext = 30
+
     # load the logo into app.images
-    img = Image.open('images/logo.png')
-    imgSmallerResize = img.resize((250,250))
+    img = Image.open('images/logo_v2.png')
+    imgSmallerResize = img.resize((200,200))
     app.images['logo'] = ImageTk.PhotoImage(imgSmallerResize)
 
-    # bg = PhotoImage(file = "images/southafricanbuilding.jpg")
-    # mainBG = Label(app.window, image = bg)
-    # Place image on canvas 
-
     app.cobjects.extend([
+        #app.c.create_image(0,0,image = app.images['bg'], anchor='nw'),
         app.c.create_image(app.width/2, 150, image = app.images['logo'], anchor = 'center'),
         # labels for text entry
-        app.c.create_text(app.width/2, app.height/2, font='Arial 15', text='Username', anchor='center'),
-        app.c.create_text(app.width/2, app.height/2 +70, font='Arial 15', text='Password', anchor='center')
+        app.c.create_text(app.width/2, app.height/2 -5, font=f'Arial {textsize}', text='Username', anchor='center', fill='#3b7f3b'),
+        app.c.create_text(app.width/2, app.height/2 +65, font=f'Arial {textsize}', text='Password', anchor='center', fill='#3b7f3b')
     ])
+    
 
     # data entry points
     # app.widgets[0] = name
     # app.widgets[1] = password
     # use .get() on the above for the values entered
     app.widgets.extend([
-        Entry(app.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb'),
-        Entry(app.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF')
+        #Entry(app.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb'),
+        Entry(app.window, font=f'Arial {textsize}', justify='center', borderwidth=0, background=colour, relief='solid', 
+              highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2, foreground=highlight),
+        #Entry(app.window, font='Arial 20', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF')
+        Entry(app.window, font=f'Arial {textsize}', justify='center', borderwidth=0, background=colour, show='\u25CF', relief='solid', 
+              highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2, foreground='#3b7f3b')
     ])
+    app.widgets[0].insert(0, app.settings['saved_user'])
     app.widgets[0].place(x=app.width/2, y=(app.height/2)+30, anchor='center', width=int(app.width*2/3), height=40)
     app.widgets[1].place(x=app.width/2, y=(app.height/2)+100, anchor='center', width=int(app.width*2/3), height=40)
 
@@ -35,30 +54,54 @@ def draw_front_page(app):
     # app.widgets[2] = log in
     # app.widgets[3] = go to register
     app.widgets.extend([
-        Button(app.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
-                activebackground="#226D22", activeforeground='white',
-                text='Log In Now \u2192', command = app.log_in_pressed),
+        Button(app.window, font=f'Arial {bigtext}', justify='center', background="#3b7f3b", foreground=colour,
+                activebackground="#226D22", activeforeground=colour,
+                text='Log In', command = app.log_in_pressed),
 
-        Button(app.window, font='Arial 10', justify='center', background="#bbbbbb",
-               text='Register', command = app.draw_register_page)
-
-        #Button(app.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
-        #    activebackground="#226D22", activeforeground='white',
-        #    text='Map', command=app.open_map), # map button for testing
+        Button(app.window,
+        text="Register Now",
+        font=("Arial", smalltext, "bold"),
+        bg=colour, fg="#3b7f3b",
+        activebackground=colour, activeforeground="#3b7f3b",
+        relief="flat",
+        borderwidth=0,
+        command=app.draw_register_page  # Go to register page
+    )
     ])
-    app.widgets[2].place(x=app.width/2, y=(app.height/2)+170, anchor='center', width=int(app.width*2/3), height=40)
-    app.widgets[3].place(x=app.width/2, y=app.height-40, anchor='center', width=int(app.width/2), height=30)
+    app.widgets[2].place(x=app.width/2, y=(app.height/2)+170, anchor='center', width=int(app.width*2/3), height=bigtext+20)
+    app.widgets[3].place(x=app.width/2, y=app.height-10, anchor='s', width=int(app.width/2), height=bigtext+10)
 
 def draw_register_page(app):
     app.clear_screen()
 
+    if app.settings['theme'] == 'Light':
+        colour = 'white'
+        highlight = 'black'
+    else:
+        colour = '#2A2A2E'
+        highlight = 'white'
+
+    if app.settings['textsize'] == 'Normal':
+        textsize = 15
+        smalltext = 12
+        bigtext = 20
+    else:
+        textsize = 20
+        smalltext = 20
+        bigtext = 30
+
+    img = Image.open('images/logo_v2.png')
+    imgSmallerResize = img.resize((200,200))
+    app.images['logo'] = ImageTk.PhotoImage(imgSmallerResize)
+
     app.cobjects.extend([
+        #app.c.create_image(0,0,image = app.images['bg'], anchor='nw'),
         app.c.create_image(app.width/2, 150, image = app.images['logo'], anchor = 'center'),
         # labels for text entry
-        app.c.create_text(app.width/2, app.height/2, font='Arial 10', text='Username', anchor='n'),
-        app.c.create_text(app.width/2, app.height/2 +50, font='Arial 10', text='Email', anchor='n'),
-        app.c.create_text(app.width/2, app.height/2 +100, font='Arial 10', text='Password', anchor='n'),
-        app.c.create_text(app.width/2, app.height/2 +150, font='Arial 10', text='Confirm Password', anchor='n')
+        app.c.create_text(app.width/2, app.height/2 -86, font=f'Arial {smalltext}', text='Username', anchor='center', fill='#3b7f3b'),
+        app.c.create_text(app.width/2, app.height/2 -16, font=f'Arial {smalltext}', text='Email', anchor='center', fill='#3b7f3b'),
+        app.c.create_text(app.width/2, app.height/2 +54, font=f'Arial {smalltext}', text='Password', anchor='center', fill='#3b7f3b'),
+        app.c.create_text(app.width/2, app.height/2 +124, font=f'Arial {smalltext}', text='Confirm Password', anchor='center', fill='#3b7f3b')
     ])
 
     # data entry points
@@ -68,26 +111,37 @@ def draw_register_page(app):
     # app.widgets[3] = confirm password
     # use .get() on the above for the values entered
     app.widgets.extend([
-        Entry(app.window, font='Arial 15', justify='center', borderwidth=5, background='#bbbbbb'),
-        Entry(app.window, font='Arial 15', justify='center', borderwidth=5, background='#bbbbbb'),
-        Entry(app.window, font='Arial 15', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF'),
-        Entry(app.window, font='Arial 15', justify='center', borderwidth=5, background='#bbbbbb', show='\u25CF')
+        Entry(app.window, font=f'Arial {textsize}', justify='center', borderwidth=0, background=colour, relief='solid', 
+              highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2, foreground=highlight),
+        Entry(app.window, font=f'Arial {textsize}', justify='center', borderwidth=0, background=colour, relief='solid', 
+              highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2, foreground=highlight),
+        Entry(app.window, font=f'Arial {textsize}', justify='center', borderwidth=0, background=colour, show='\u25CF', relief='solid', 
+              highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2, foreground='#3b7f3b'),
+        Entry(app.window, font=f'Arial {textsize}', justify='center', borderwidth=0, background=colour, show='\u25CF', relief='solid', 
+              highlightbackground='#3b7f3b', highlightcolor='#3b7f3b', highlightthickness=2, foreground='#3b7f3b')
     ])
-    app.widgets[0].place(x=app.width/2, y=(app.height/2)+30, anchor='center', width=int(app.width*2/3), height=35)
-    app.widgets[1].place(x=app.width/2, y=(app.height/2)+80, anchor='center', width=int(app.width*2/3), height=35)
-    app.widgets[2].place(x=app.width/2, y=(app.height/2)+130, anchor='center', width=int(app.width*2/3), height=35)
-    app.widgets[3].place(x=app.width/2, y=(app.height/2)+180, anchor='center', width=int(app.width*2/3), height=35)
+    app.widgets[0].place(x=app.width/2, y=(app.height/2)-50, anchor='center', width=int(app.width*2/3), height=35)
+    app.widgets[1].place(x=app.width/2, y=(app.height/2)+20, anchor='center', width=int(app.width*2/3), height=35)
+    app.widgets[2].place(x=app.width/2, y=(app.height/2)+90, anchor='center', width=int(app.width*2/3), height=35)
+    app.widgets[3].place(x=app.width/2, y=(app.height/2)+160, anchor='center', width=int(app.width*2/3), height=35)
 
     # buttons
     # app.widgets[4] = register
     # app.widgets[5] = go to log in
     app.widgets.extend([
-        Button(app.window, font='Arial 20', justify='center', background="#3b7f3b", foreground='white',
-                activebackground="#226D22", activeforeground='white',
-                text='Register \u2192', command=app.register_pressed),
+        Button(app.window, font=f'Arial {bigtext}', justify='center', background="#3b7f3b", foreground=colour,
+                activebackground="#226D22", activeforeground=colour,
+                text='Register', command=app.register_pressed),
 
-        Button(app.window, font='Arial 10', justify='center', background="#bbbbbb",
-               text='Log In', command = app.draw_front_page)         
+        Button(app.window,
+        text="Log In",
+        font=("Arial", smalltext, "bold"),
+        bg=colour, fg="#3b7f3b",
+        activebackground=colour, activeforeground="#3b7f3b",
+        relief="flat",
+        borderwidth=0,
+        command=app.draw_front_page  # Go to login page
+    )        
     ])
-    app.widgets[4].place(x=app.width/2, y=(app.height/2)+230, anchor='center', width=int(app.width*2/3), height=40)
-    app.widgets[5].place(x=app.width/2, y=app.height-40, anchor='center', width=int(app.width/2), height=30)
+    app.widgets[4].place(x=app.width/2, y=(app.height/2)+230, anchor='center', width=int(app.width*2/3), height=bigtext+20)
+    app.widgets[5].place(x=app.width/2, y=app.height-40, anchor='center', width=int(app.width/2), height=bigtext+10)

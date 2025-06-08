@@ -3,25 +3,28 @@ import mariadb
 import sys
 import bcrypt as bcrypt
 
-# Connect to MariaDB Platform
-try:
-    conn = mariadb.connect(
-        user="jacobvuk_synoptic",
-        password="Fy,tEvM0wmx[",
-        host="jacobv123.uk",
-        port=3306,
-        database="jacobvuk_waste_collector"
+def get_connection():
+    # Connect to MariaDB Platform
+    try:
+        conn = mariadb.connect(
+            user="jacobvuk_synoptic",
+            password="Fy,tEvM0wmx[",
+            host="jacobv123.uk",
+            port=3306,
+            database="jacobvuk_waste_collector"
 
-    )
-except mariadb.Error as e:
-    print(f"Error connecting to MariaDB Platform: {e}")
-    sys.exit(1)
+        )
+
+        return conn, conn.cursor()
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
 
 
 
 def displayDBData():
     # Get Cursor
-    cur = conn.cursor()
+    conn, cur = get_connection()
     cur.execute("SELECT * FROM testTable")
     rows = cur.fetchall()
     finalString = "\n".join(map(str, rows)) #Map turns each row to str and join a new line for each one
@@ -39,7 +42,7 @@ def verify(username, password):
     print (type(dbEncryptPWGet))
     print(type(userData[0]))
     # Get Cursor
-    cur = conn.cursor()
+    conn, cur = get_connection()
     cur.execute(dbEncryptPWGet, userData)
     getEncryptedPassword = cur.fetchone()
     print(dbEncryptPWGet)
@@ -50,7 +53,7 @@ def verify(username, password):
 
 def registerUser(regData):
     # Get Cursor
-    cur = conn.cursor()
+    conn, cur = get_connection()
     try:
         regData = (regData[0], regData[1], encrypter(regData[2]), None)
         dbRegInsert = "INSERT INTO User (username, email, password, userPic) VALUES (%s, %s, %s, %s)"
@@ -66,23 +69,27 @@ def registerUser(regData):
         cur.close()
 
 def logInUser(loginData):
-    # Get Cursor
-    cur = conn.cursor()
+    conn, cur = get_connection()
     try:
-        print("here")
         loginCheck = verify(loginData[0], loginData[1])
         if loginCheck:
-            return True
-    
-    except mariadb.Error as e:
-        print({e})
+            # Fetch the user ID from the database
+            cur.execute("SELECT userID FROM User WHERE username = %s", (loginData[0],))
+            result = cur.fetchone()
+            if result:
+                return result[0]  # Return the userID (integer)
+            else:
+                return False
+        else:
+            return False
+    except Exception as e:
+        print(e)
         return False
-
     finally:
         cur.close()
 
 def getCurrentUserTP(username):
-    cur = conn.cursor()
+    conn, cur = get_connection()
     try:
         getTPData = (username,)
         getTPSelect = "SELECT userTrashPoints FROM User WHERE username = %s"
@@ -96,5 +103,78 @@ def getCurrentUserTP(username):
     
     finally:
         cur.close()
-    
 
+def getAllShopItems():
+    conn, cur = get_connection()
+    shopItemList = []
+    try:
+        getAllItems = "SELECT itemName FROM pointShop"
+        cur.execute(getAllItems) #Need to keep data and Sql seperete to avoid sql injections
+        getItemList = cur.fetchall()
+        for tupleItem in getItemList:
+            for shopItem in tupleItem:
+                shopItemList.append(shopItem)
+        return shopItemList
+        
+    except mariadb.Error as e:
+        print({e})
+        return []
+    
+    finally:
+        cur.close()
+
+def getAllShopPrices():
+    conn, cur = get_connection()
+    priceItemList = []
+    try:
+        getAllItems = "SELECT itemPrice FROM pointShop"
+        cur.execute(getAllItems) #Need to keep data and Sql seperete to avoid sql injections
+        getPriceList = cur.fetchall()
+        for tuplePrice in getPriceList:
+            for shopPrice in tuplePrice:
+                priceItemList.append(shopPrice)
+        return priceItemList
+        
+    except mariadb.Error as e:
+        print({e})
+        return []
+    
+    finally:
+        cur.close()
+
+def getMarkerCountForUser(user_id):
+    conn, cur = get_connection()
+    try:
+        query = "SELECT COUNT(*) FROM markers WHERE user_id = %s"
+        cur.execute(query, (user_id,))
+        count = cur.fetchone()[0]
+        return count
+    except Exception as e:
+        print(e)
+        return 0
+    finally:
+        cur.close()
+
+def purchaseSubtraction(totalShopSum, username):
+    conn, cur = get_connection()
+    try:
+        data = (username,)
+        query = "SELECT userTrashPoints FROM User WHERE username = %s"
+        cur.execute(query, data)
+        userTP = cur.fetchone()[0]
+        print(userTP)
+        newTP = (userTP-totalShopSum)
+        if newTP <0:
+            return False
+        updateData = (newTP, str(username))
+        print(f"new tp = {newTP} username = {str(username)}")
+        updateQuery = "UPDATE User SET userTrashPoints = %s WHERE username = %s"
+        cur.execute(updateQuery, updateData)
+        conn.commit()
+        return True
+    
+    except Exception as e:
+        print(e)
+        return 0
+    finally:
+        cur.close()
