@@ -68,9 +68,20 @@ def test_dark_theme(mock_display, mocker):
     mock_display.settings["theme"] = "Dark"
     mock_label = mocker.patch("lib.map.Label", return_value=mocker.MagicMock())
 
+    # call open_map
     open_map(mock_display)
 
     # Unpack arguments for mock_label, we only care about background colour though
     _, kwargs = mock_label.call_args
     # Asserts
     assert kwargs["bg"] == "#2A2A2E"
+
+def test_getMarkerCountForUser(mock_display, mocker):
+    set_mock_map(mocker)
+    get_count_mock = mocker.patch("lib.map.getMarkerCountForUser", return_value=10)
+
+    # call open_map
+    open_map(mock_display)
+
+    # Asserts
+    get_count_mock.assert_called_once_with(mock_display.user_id)
