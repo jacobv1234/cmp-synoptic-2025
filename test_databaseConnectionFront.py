@@ -143,3 +143,25 @@ def test_purchaseSubtraction_failure(mock_db, mocker):
 
     result = db.purchaseSubtraction(50, "username")
     assert result is False
+
+
+def test_getUserIcon_success(mock_db):
+    # Call fixture
+    mock_connection, mock_cursor = mock_db
+    mock_icon = "icon.png"
+    mock_cursor.fetchone.return_value = (mock_icon,)
+
+    result = db.getUserIcon("testuser")
+    assert result == mock_icon
+    mock_cursor.execute.assert_called_once_with("SELECT userPic FROM User WHERE username = %s", ("testuser",))
+    mock_cursor.close.assert_called_once()
+
+    
+def test_getUserIcon_failure(mock_db):
+    # Call fixture
+    mock_connection, mock_cursor = mock_db
+    mock_cursor.execute.side_effect = mariadb.Error("DB error")
+
+    result = db.getUserIcon("testuser")
+    assert result == 0
+    mock_cursor.close.assert_called_once()
