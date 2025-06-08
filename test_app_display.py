@@ -219,3 +219,25 @@ def test_close_popup_no_popup(display):
     display.closePopup()
 
     assert display.higherFrame is None
+
+# Intended behaviour: widgets length is greater than 0
+def test_buy_item_success(display, mocker):
+    # No popup
+    display.higherFrame = None
+
+    # Patch dependencies
+    # return_value = true for subtractCost if check
+    mocker.patch("lib.appdisplay.purchaseSubtraction", return_value=True)
+    mocker.patch("lib.appdisplay.Frame", return_value=mocker.MagicMock())
+    mocker.patch("lib.appdisplay.Label", return_value=mocker.MagicMock())
+    mocker.patch("lib.appdisplay.Button", return_value=mocker.MagicMock())
+
+    # Empty widgets as this function appends it
+    display.widgets = []
+    display.window = mocker.MagicMock()
+
+    display.buyItem(420)
+
+    # asserts
+    assert display.higherFrame is not None
+    assert len(display.widgets) > 0
