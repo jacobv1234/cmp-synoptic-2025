@@ -133,6 +133,8 @@ def test_purchaseSubtraction_success(mock_db, mocker):
     mock_cursor.fetchone.return_value = (100,)
 
     result = db.purchaseSubtraction(99, "username")
+
+    # Asserts
     assert result is True
 
 # Intended behaviour: subtraction is successful and result is false
@@ -142,9 +144,11 @@ def test_purchaseSubtraction_failure(mock_db, mocker):
     mock_cursor.fetchone.return_value = (1,)
 
     result = db.purchaseSubtraction(50, "username")
+
+    # Asserts
     assert result is False
 
-
+# Intended behaviour: result is set as icon.png
 def test_getUserIcon_success(mock_db, mocker):
     # Call fixture
     mock_connection, mock_cursor = mock_db
@@ -152,37 +156,72 @@ def test_getUserIcon_success(mock_db, mocker):
     mock_cursor.fetchone.return_value = (mock_icon,)
 
     result = db.getUserIcon("testuser")
+
+    # Asserts
     assert result == mock_icon
     mock_cursor.execute.assert_called_once_with("SELECT userPic FROM User WHERE username = %s", ("testuser",))
     mock_cursor.close.assert_called_once()
 
-    
+# Intended behaviour: result is 0 and cursor is closed
 def test_getUserIcon_failure(mock_db, mocker):
     # Call fixture
     mock_connection, mock_cursor = mock_db
     mock_cursor.execute.side_effect = mariadb.Error("DB error")
 
     result = db.getUserIcon("testuser")
+
+    # Asserts
     assert result == 0
     mock_cursor.close.assert_called_once()
 
-def test_getUserTrashFound_success(mock_db):
+# Intended behaviour: result is set as 42, SQL statement is executed and cursor closed
+def test_getUserTrashFound_success(mock_db, mocker):
     # Call fixture
     mock_connection, mock_cursor = mock_db
     mock_trash = 42
     mock_cursor.fetchone.return_value = (mock_trash,)
 
     result = db.getUserTrashFound("testuser")
+
+    # Asserts
     assert result == mock_trash
     mock_cursor.execute.assert_called_once_with("SELECT trashFound FROM User WHERE username = %s", ("testuser",))
     mock_cursor.close.assert_called_once()
 
-
-def test_getUserTrashFound_failure(mock_db):
+# Intended behaviour: result is 0 and cursor is closed
+def test_getUserTrashFound_failure(mock_db, mocker):
     # Call fixture
     mock_connection, mock_cursor = mock_db
     mock_cursor.execute.side_effect = mariadb.Error("DB error")
 
     result = db.getUserTrashFound("testuser")
+
+    # Asserts
+    assert result == 0
+    mock_cursor.close.assert_called_once()
+
+# Intended behaviour: result is set as 999, SQL statement is executed and cursor closed
+def test_getUserCleaned_success(mock_db, mocker):
+    # Call fixture
+    mock_connection, mock_cursor = mock_db
+    mock_cleaned = 999
+    mock_cursor.fetchone.return_value = (mock_cleaned,)
+
+    result = db.getUserCleaned("testuser")
+
+    # Asserts
+    assert result == mock_cleaned
+    mock_cursor.execute.assert_called_once_with("SELECT trashCleaned FROM User WHERE username = %s", ("testuser",))
+    mock_cursor.close.assert_called_once()
+
+# Intended behaviour: result is 0 and cursor is closed
+def test_getUserCleaned_failure(mock_db, mocker):
+    # Call fixture
+    mock_connection, mock_cursor = mock_db
+    mock_cursor.execute.side_effect = mariadb.Error("DB error")
+
+    result = db.getUserCleaned("testuser")
+
+    # Asserts
     assert result == 0
     mock_cursor.close.assert_called_once()
