@@ -2,6 +2,7 @@ import pytest
 import tkinter as tk
 import io
 from PIL import Image
+from lib.map import open_map
 
 @pytest.fixture
 def mock_display(mocker):
@@ -24,20 +25,34 @@ def mock_display(mocker):
 
     return display
 
-def mock_map(mocker):
+def set_mock_map(mocker):
     # Set mockers
     mock_map = mocker.MagicMock()
     # Patch mockers
-    mocker.patch("map.tkintermapview.TkinterMapView", return_value=mock_map)
-    
-    mocker.patch("map.tk.Frame", return_value=mocker.MagicMock())
-    mocker.patch("map.Label", return_value=mocker.MagicMock())
-    mocker.patch("map.Button", return_value=mocker.MagicMock())
-    mocker.patch("map.draw_markers_page")
-    mocker.patch("map.getMarkerCountForUser", return_value=1)
-    mocker.patch("map.urlopen", return_value=io.BytesIO(b"mock_image"))
+    mocker.patch("lib.map.tkintermapview.TkinterMapView", return_value=mock_map)
+
+    mocker.patch("lib.map.tk.Frame", return_value=mocker.MagicMock())
+    mocker.patch("lib.map.Label", return_value=mocker.MagicMock())
+    mocker.patch("lib.map.Button", return_value=mocker.MagicMock())
+    mocker.patch("lib.map.draw_markers_page")
+    mocker.patch("lib.map.getMarkerCountForUser", return_value=1)
+    mocker.patch("lib.map.urlopen", return_value=io.BytesIO(b"mock_image"))
     # Mock attributes for a real image
-    mocker.patch("map.Image.open", return_value=Image.new("RGBA", (64, 64)))
-    mocker.patch("map.ImageTk.PhotoImage", return_value=mocker.MagicMock())
+    mocker.patch("lib.map.Image.open", return_value=Image.new("RGBA", (64, 64)))
+    mocker.patch("lib.map.ImageTk.PhotoImage", return_value=mocker.MagicMock())
 
     return mock_map
+
+def test_open(mock_display, mocker):
+    # Set mock map
+    mock_map = set_mock_map(mocker)
+    # Call open map
+    open_map(mock_display)
+
+    # Asserts
+    mock_map.set_position.assert_called_once_with(-26.2041, 28.0473)
+    mock_map.set_zoom.assert_called_once_with(13)
+    mock_map.set_marker.assert_called_once_with(-26.2041, 28.0473)
+
+    # Check widgets added
+    assert len(mock_display.widgets) > 0
