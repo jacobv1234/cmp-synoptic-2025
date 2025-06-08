@@ -221,23 +221,54 @@ def test_close_popup_no_popup(display):
     assert display.higherFrame is None
 
 # Intended behaviour: widgets length is greater than 0
+#                     mock_label is packed
 def test_buy_item_success(display, mocker):
     # No popup
     display.higherFrame = None
-
+    # Mock label
+    mock_label = mocker.MagicMock()
     # Patch dependencies
     # return_value = true for subtractCost if check
     mocker.patch("lib.appdisplay.purchaseSubtraction", return_value=True)
     mocker.patch("lib.appdisplay.Frame", return_value=mocker.MagicMock())
-    mocker.patch("lib.appdisplay.Label", return_value=mocker.MagicMock())
+    mocker.patch("lib.appdisplay.Label", return_value=mock_label)
     mocker.patch("lib.appdisplay.Button", return_value=mocker.MagicMock())
 
     # Empty widgets as this function appends it
     display.widgets = []
     display.window = mocker.MagicMock()
 
+    # Call buyItem
     display.buyItem(420)
 
     # asserts
+    assert mock_label.pack.called
+    assert display.higherFrame is not None
+    assert len(display.widgets) > 0
+
+    # Intended behaviour: widgets length is greater than 0
+    #                     mock_label is packed
+def test_buy_item_fail(display, mocker):
+    # No popup
+    display.higherFrame = None
+
+    # Mock label
+    mock_label = mocker.MagicMock()
+    # Patch dependencies
+    # return_value = false for subtractCost if check so it goes to the elseif
+    mocker.patch("lib.appdisplay.purchaseSubtraction", return_value=False)
+    mocker.patch("lib.appdisplay.Frame", return_value=mocker.MagicMock())
+    mocker.patch("lib.appdisplay.Label", return_value=mock_label)
+    mocker.patch("lib.appdisplay.Button", return_value=mocker.MagicMock())
+
+    # Empty widgets as this function appends it
+    display.widgets = []
+    display.window = mocker.MagicMock()
+
+    # Call buyItem
+    display.buyItem(123)
+
+    # asserts
+    assert mock_label.pack.called
     assert display.higherFrame is not None
     assert len(display.widgets) > 0
