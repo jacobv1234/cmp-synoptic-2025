@@ -172,8 +172,8 @@ def draw_markers_page(self):
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             # SQL database query to insert markers
-            query = """INSERT INTO markers 
-                    (type, gps, user_id, image, timestamp)
+            query = """INSERT INTO userGarbage 
+                    (garbageType, garbageCoord, userID1, garbagePic1, garbageDate1)
                     VALUES (%s, ST_GeomFromText(%s), %s, %s, %s)"""
             
             # Read image (BLOB)

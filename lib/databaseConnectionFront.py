@@ -145,7 +145,7 @@ def getAllShopPrices():
 def getMarkerCountForUser(user_id):
     conn, cur = get_connection()
     try:
-        query = "SELECT COUNT(*) FROM markers WHERE user_id = %s"
+        query = "SELECT COUNT(*) FROM userGarbage WHERE userID1 = %s"
         cur.execute(query, (user_id,))
         count = cur.fetchone()[0]
         return count
