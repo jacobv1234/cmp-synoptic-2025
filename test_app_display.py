@@ -1,0 +1,329 @@
+import pytest
+import tkinter as tk
+from lib.appdisplay import AppDisplay
+
+@pytest.fixture
+# Fixture that mocks a tkinter GUI
+def display(mocker):
+
+    # Prevent draw_front_page from executing its real logic during init
+    mocker.patch("lib.appdisplay.draw_front_page")
+
+    mocker.patch("lib.appdisplay.Tk", return_value = mocker.MagicMock(name="mock_tk"))
+    mocker.patch("lib.appdisplay.Frame", return_value = mocker.MagicMock(name="mock_frame"))
+    mocker.patch("lib.appdisplay.Canvas", return_value = mocker.MagicMock(name="mock_canvas"))
+    mocker.patch("lib.appdisplay.ImageTk.PhotoImage", return_value=mocker.MagicMock(name="mock_photo_image"))
+
+    # mock settings
+    MockSettings={
+    "language": "English",
+    "theme": "Light",
+    "textsize": "Normal",
+    "saved_user": ""
+    }
+
+    mockDisplay = AppDisplay(settings=MockSettings)
+
+    # Patch c with create_text and delete
+    mockDisplay.c.create_text = mocker.MagicMock(name="create_text", return_value="mockTextId")
+    mockDisplay.c.delete = mocker.MagicMock(name="delete")
+
+    # default empty cobj and widgets lists
+    mockDisplay.cobjects = []
+    mockDisplay.widgets = []
+    # mocks for widgets and cobjs
+    mock_widget = mocker.MagicMock(name="mock_widget")
+    display.widgets = [mock_widget]
+    mock_cobj = "mock_cobj"
+    display.cobjects = [mock_cobj]
+
+    return mockDisplay
+
+# Intended behaviour: __init__ should be setting display.running as "true"
+#                     display.width and display.height should be set to 480 and 720 respectively
+def test_display_init(display):
+    assert display.running is True
+    assert display.width == 480
+    assert display.height == 720
+
+# Intended behaviour: cobjects array should be empty
+#                     widgets array should be empty
+def test_clear_screen(display, mocker):
+    # Call clear_screen
+    display.clear_screen()
+    
+    # Asserts
+    assert display.cobjects == []
+    assert display.widgets == []
+
+# Intended behaviour: checks that we log in with the valuelist containing an entry "helloworld"
+def test_log_in_pressed(display, mocker):
+
+    # isinstance expects an entry so we mock it
+    entry_mocker = mocker.MagicMock(spec=tk.Entry)
+    entry_mocker.get.return_value = "helloworld"
+    display.widgets = [entry_mocker]
+    
+    open_map_mocker = mocker.patch("lib.appdisplay.open_map")
+
+    # Test with loginUser set to True
+    mocker_log_in = mocker.patch("lib.appdisplay.logInUser", return_value = True)
+
+    # Call log_in_pressed
+    display.log_in_pressed()
+
+    # asserts
+    mocker_log_in.assert_called_once_with(["helloworld"])
+    # assert open_map is called
+    open_map_mocker.assert_called_once_with(display)
+
+# Setter function for register_test, both for success and failures
+def setter_register_test(display, mocker, r):
+    # Mock entries for user email and password
+    entry_username_mocker = mocker.MagicMock(spec=tk.Entry)
+    entry_username_mocker.get.return_value = "testusername"
+    entry_email_mocker = mocker.MagicMock(spec=tk.Entry)
+    entry_email_mocker.get.return_value = "test@pleasework.com"
+    entry_password_mocker = mocker.MagicMock(spec=tk.Entry)
+    entry_password_mocker.get.return_value = "password"
+    entry_confirm_password_mocker = mocker.MagicMock(spec=tk.Entry)
+    entry_confirm_password_mocker.get.return_value = "password"
+    # assign entry values
+    display.widgets = [entry_username_mocker, entry_email_mocker, entry_password_mocker, entry_confirm_password_mocker]
+
+    # Set the return value of registration (true/false)
+    register_mocker = mocker.patch("lib.appdisplay.registerUser", return_value = r)
+    # Patch draw_front_page
+    front_page_mocker  = mocker.patch.object(display, "draw_front_page")
+
+    return display.widgets, register_mocker, front_page_mocker
+
+# Intended behaviour: we register with "test@pleasework.com"
+#                     draw_front_page is called properly
+#                     a mock entry is created for "test@pleasework.com"
+def test_register_pressed_true(display, mocker):
+    # Call setter function
+    entry_mocker, register_mocker, front_page_mocker = setter_register_test(display, mocker, True)
+    
+    # Call register_pressed
+    display.register_pressed()
+
+    # Asserts
+    register_mocker.assert_called_once_with(["testusername","test@pleasework.com","password","password"])
+    front_page_mocker.assert_called_once()
+
+# Intended behaviour: a mock error is created in display.cobjects
+def test_register_pressed_false(display, mocker):
+    entry_mocker, register_mocker, front_page_mocker = setter_register_test(display, mocker, False)
+
+    error_mocker = mocker.patch.object(display.c, "create_text", return_value = "mockError")
+
+    # Call register_pressed
+    display.register_pressed()
+
+    ## Assert
+    assert "mockError" in display.cobjects
+
+def test_return_to_front_page(display, mocker):
+    # Patch mock draw_front_page
+    mock_front_page = mocker.patch.object(display, "draw_front_page")
+    # mockers
+    mock_map_widget = mocker.MagicMock(name="mock_map_widget")
+    display.map_widget = mock_map_widget
+    # Call open_shopping_page
+    display.return_to_front_page()
+
+    # Assert screen cleared
+    assert display.cobjects == []
+    assert display.widgets == []
+    # Assert map_widget destroy called
+    mock_map_widget.destroy.assert_called_once()
+    # Assert draw_shopping_page called
+    mock_front_page.assert_called_once()
+
+
+# Intended behaviour: Shopping page drawn
+def test_open_shopping_page(display, mocker):
+    # Patch mock draw_shopping_page
+    mock_shopping_page = mocker.patch("lib.appdisplay.draw_shopping_page")
+    # Call open_shopping_page
+    display.open_shopping_page()
+    # Assert clearing screen worked
+    assert display.cobjects == []
+    assert display.widgets == []
+    # Assert draw_shopping_page called
+    mock_shopping_page.assert_called_once_with(display)
+
+# Intended behaviour: Markers page drawn
+def test_open_markers_page(display, mocker):
+    # Patch mock draw_markers_page
+    mock_markers_page = mocker.patch("lib.appdisplay.draw_markers_page")
+    # Call open_markers_page
+    display.open_markers_page()
+    # Assert clearing screen worked
+    assert display.cobjects == []
+    assert display.widgets == []
+    # Assert draw_markers_page called
+    mock_markers_page.assert_called_once_with(display)
+
+# Intended behaviour: update is called once
+def test_update(display, mocker):
+    # Mock a window
+    mock_window = mocker.MagicMock()
+    # Set window to mock
+    display.window = mock_window
+    # Call update
+    display.update()
+
+    mock_window.update.assert_called_once()
+
+# Intended behaviour: mock_window.destroy is called once
+#                     display.isrunning set to false
+def test_close(display, mocker):
+    mock_window = mocker.MagicMock()
+    display.window = mock_window
+    # Set running as true
+    display.running = True
+
+    # Call display.close()
+    display.close()
+
+    mock_window.destroy.assert_called_once()
+    assert display.running is False
+
+# Intended behaviour: if check in closePopup succeeds
+#                     display.higherFrame is destroyed
+#                     open_shopping_page is called.
+def test_closePopup(display, mocker):
+    # create mockers
+    mock_open_shopping_page = mocker.patch.object(display, "open_shopping_page")
+    mock_frame = mocker.MagicMock()
+    display.higherFrame = mock_frame
+
+    # call closePopup
+    display.closePopup()
+
+    # asserts
+    mock_frame.destroy.assert_called_once()
+
+    assert display.higherFrame is None
+    mock_open_shopping_page.assert_called_once()
+
+# Intended behaviour: closePopup runs without an error
+#                     higherFrame is none
+def test_close_popup_no_popup(display):
+
+    display.higherFrame = None
+
+    # call closePopup
+    display.closePopup()
+
+    assert display.higherFrame is None
+
+# Intended behaviour: widgets length is greater than 0
+#                     mock_label is packed
+def test_buy_item_success(display, mocker):
+    # No popup
+    display.higherFrame = None
+    # Mock label
+    mock_label = mocker.MagicMock()
+    # Patch dependencies
+    # return_value = true for subtractCost if check
+    mocker.patch("lib.appdisplay.purchaseSubtraction", return_value=True)
+    mocker.patch("lib.appdisplay.Frame", return_value=mocker.MagicMock())
+    mocker.patch("lib.appdisplay.Label", return_value=mock_label)
+    mocker.patch("lib.appdisplay.Button", return_value=mocker.MagicMock())
+
+    # Empty widgets as this function appends it
+    display.widgets = []
+    display.window = mocker.MagicMock()
+
+    # Call buyItem
+    display.buyItem(420)
+
+    # asserts
+    assert mock_label.pack.called
+    assert display.higherFrame is not None
+    assert len(display.widgets) > 0
+
+    # Intended behaviour: widgets length is greater than 0
+    #                     mock_label is packed
+def test_buy_item_fail(display, mocker):
+    # No popup
+    display.higherFrame = None
+
+    # Mock label
+    mock_label = mocker.MagicMock()
+    # Patch dependencies
+    # return_value = false for subtractCost if check so it goes to the elseif
+    mocker.patch("lib.appdisplay.purchaseSubtraction", return_value=False)
+    mocker.patch("lib.appdisplay.Frame", return_value=mocker.MagicMock())
+    mocker.patch("lib.appdisplay.Label", return_value=mock_label)
+    mocker.patch("lib.appdisplay.Button", return_value=mocker.MagicMock())
+
+    # Empty widgets as this function appends it
+    display.widgets = []
+    display.window = mocker.MagicMock()
+
+    # Call buyItem
+    display.buyItem(123)
+
+    # asserts
+    assert mock_label.pack.called
+    assert display.higherFrame is not None
+    assert len(display.widgets) > 0
+
+# Intended behaviour: isCheckedTrue is selected, isCheckedFalse is not
+#                     display.widgets is >= 3
+#                     place and pack calls succeed
+def test_getChecked(display, mocker):
+    # Set mockers
+    mock_frame = mocker.MagicMock()
+    mock_label = mocker.MagicMock()
+    mock_button = mocker.MagicMock()
+    # have to patch frame again so that we can populate with a return value
+    mocker.patch("lib.appdisplay.Frame", return_value=mock_frame)
+    mocker.patch("lib.appdisplay.Label", return_value=mock_label)
+    mocker.patch("lib.appdisplay.Button", return_value=mock_button)
+    isCheckedTrue = mocker.MagicMock()
+    isCheckedFalse = mocker.MagicMock()
+    # Set mocker returns
+    isCheckedTrue.get.return_value = True
+    isCheckedFalse.get.return_value = False
+
+    # Populate display.itemInfo with example data
+    display.itemInfo = [
+        [isCheckedTrue, "Legendary Wooden Plank of Power", 64],
+        [isCheckedFalse, "2 liters of kilju", 42],
+    ]
+
+    display.window = mocker.MagicMock()
+    display.widgets = []
+
+    # call display.getChecked
+    display.getChecked()
+
+    # asserts
+    assert mock_frame.place.called
+    assert mock_label.pack.called
+    assert mock_button.pack.called
+    assert len(display.widgets) >= 3
+
+# Intended behaviour: isCheckedFalse is not selected
+#                     the shopBasketFrame is destroyed
+#                     display does not have attribute "shopBasketFrame"
+def test_getChecked_no_items(display, mocker):
+    isCheckedFalse = mocker.MagicMock()
+    isCheckedFalse.get.return_value = False
+    display.itemInfo = [[isCheckedFalse, "Door Stuck", 0]]
+
+    mock_shopBasketFrame = mocker.MagicMock()
+    mock_shopBasketFrame.winfo_exists = True
+    display.shopBasketFrame = mock_shopBasketFrame
+
+    # Call display.getChecked
+    display.getChecked()
+
+    # Asserts
+    mock_shopBasketFrame.destroy.assert_called_once()
+    assert not hasattr(display, "shopBasketFrame")

@@ -212,6 +212,22 @@ class AppDisplay:
         itemsSelected = []
         priceTotal = 0
 
+        if self.settings['theme'] == 'Light':
+            colour = 'white'
+            highlight = 'black'
+        else:
+            colour = "#2A2A2E"
+            highlight = 'white'
+        
+        if self.settings['textsize'] == 'Normal':
+            textsize = 15
+            smalltext = 12
+            bigtext = 20
+        else:
+            textsize = 20
+            smalltext = 20
+            bigtext = 30
+
         for i in self.itemInfo:
             isChecked = i[0]
             itemName = i[1]
@@ -231,19 +247,23 @@ class AppDisplay:
                 del self.shopBasketFrame
             return
         
-        self.shopBasketFrame = Frame(self.window, bg="white")            
-        self.shopBasketFrame.place(relx=0.50, rely=0.50, anchor='center')
+        self.shopBasketFrame = Frame(self.window, bg=colour)            
+        self.shopBasketFrame.place(relx=0.50, rely=0.8, anchor='s')
         self.widgets.append(self.shopBasketFrame)
 
-        itemListLabel = Label(self.shopBasketFrame, text=f"YOUR CHECKOUT ITEMS: {str(itemsSelected)[1:-1]}", font=('Arial', 14), bg='white')
+        toptextLabel = Label(self.shopBasketFrame, text=f"YOUR CHECKOUT ITEMS:", font=('Arial', textsize), bg=colour, fg=highlight)
+        toptextLabel.pack(side="top")
+        self.widgets.append(toptextLabel)
+
+        itemListLabel = Label(self.shopBasketFrame, text=f"{str(itemsSelected)[1:-1].replace("'",'')}", font=('Arial', textsize), bg=colour,fg=highlight)
         itemListLabel.pack(side="top")
         self.widgets.append(itemListLabel)
 
-        totalPriceLabel = Label(self.shopBasketFrame, text=f"TOTAL COST: {priceTotal} TP", font=('Arial', 14), bg='white')
+        totalPriceLabel = Label(self.shopBasketFrame, text=f"TOTAL COST: {priceTotal} TP", font=('Arial', textsize), bg=colour,fg=highlight)
         totalPriceLabel.pack(side="top")
         self.widgets.append(totalPriceLabel)
 
-        buyBtn = Button(self.shopBasketFrame, font='Arial 14', justify='center', background="#3b7f3b", foreground='white',activebackground="#226D22", activeforeground='white',text='Buy Item', command=lambda:self.buyItem(priceTotal))
+        buyBtn = Button(self.shopBasketFrame, font=f'Arial {textsize}', justify='center', background="#3b7f3b", foreground='white',activebackground="#226D22", activeforeground='white',text='Buy Item', command=lambda:self.buyItem(priceTotal))
         buyBtn.pack(side="top")
         self.widgets.append(buyBtn)
     
