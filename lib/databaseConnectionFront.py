@@ -2,6 +2,8 @@
 import mariadb
 import sys
 import bcrypt as bcrypt
+from PIL import Image, ImageTk
+from io import BytesIO
 
 def get_connection():
     # Connect to MariaDB Platform
@@ -55,7 +57,11 @@ def registerUser(regData):
     # Get Cursor
     conn, cur = get_connection()
     try:
-        regData = (regData[0], regData[1], encrypter(regData[2]), None)
+        userProfilePicture = Image.open("images/cleanmeakat.png")
+        defaultPicture = BytesIO()
+        userProfilePicture.save(defaultPicture, format='PNG')
+        #addMarkerImg = ImageTk.PhotoImage(userProfilePicture)
+        regData = (regData[0], regData[1], encrypter(regData[2]), defaultPicture.getvalue())
         dbRegInsert = "INSERT INTO User (username, email, password, userPic) VALUES (%s, %s, %s, %s)"
         cur.execute(dbRegInsert, regData) #Need to keep data and Sql seperete to avoid sql injections
         conn.commit()
@@ -180,12 +186,13 @@ def purchaseSubtraction(totalShopSum, username):
         cur.close()
 
 def getUserIcon(username):
-    cur = conn.cursor()
+    conn, cur = get_connection()
     try:
         data = (username,)
         query = "SELECT userPic FROM User WHERE username = %s"
         cur.execute(query, data)
         userPic = cur.fetchone()[0]
+        conn.commit()
         return userPic
 
     
@@ -196,12 +203,13 @@ def getUserIcon(username):
         cur.close()
 
 def getUserTrashFound(username):
-    cur = conn.cursor()
+    conn, cur = get_connection()
     try:
         data = (username,)
         query = "SELECT trashFound FROM User WHERE username = %s"
         cur.execute(query, data)
         userTrashFound = cur.fetchone()[0]
+        conn.commit()
         return userTrashFound
 
     
@@ -212,12 +220,13 @@ def getUserTrashFound(username):
         cur.close()
 
 def getUserCleaned(username):
-    cur = conn.cursor()
+    conn, cur = get_connection()
     try:
         data = (username,)
         query = "SELECT trashCleaned FROM User WHERE username = %s"
         cur.execute(query, data)
         userTrashCleaned = cur.fetchone()[0]
+        conn.commit()
         return userTrashCleaned
 
     
