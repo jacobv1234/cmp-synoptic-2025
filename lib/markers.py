@@ -4,6 +4,7 @@ from urllib.request import urlopen
 import io
 import geocoder
 from datetime import datetime
+from lib.databaseConnectionFront import get_connection
 
 # Function to create a marker with icons and indicators (input fields)
 def create_marker_type_selector(app_display, parent, marker_type_var):
@@ -194,13 +195,13 @@ def draw_markers_page(self):
             )
             
             # Execute query
-            cur = self.conn.cursor()
+            conn, cur = get_connection()
             cur.execute(query, params)
-            self.conn.commit()
+            conn.commit()
             messagebox.showinfo("Success", "Marker added successfully!")
             
         except Exception as e:
-            self.conn.rollback()
+            conn.rollback()
             messagebox.showerror("Database Error", str(e))
         finally:
             if 'cur' in locals():
