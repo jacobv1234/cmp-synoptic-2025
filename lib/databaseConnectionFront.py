@@ -180,7 +180,7 @@ def purchaseSubtraction(totalShopSum, username):
         cur.close()
 
 def getUserIcon(username):
-    cur = conn.cursor()
+    conn, cur = get_connection()
     try:
         data = (username,)
         query = "SELECT userPic FROM User WHERE username = %s"
@@ -196,7 +196,7 @@ def getUserIcon(username):
         cur.close()
 
 def getUserTrashFound(username):
-    cur = conn.cursor()
+    conn, cur = get_connection()
     try:
         data = (username,)
         query = "SELECT trashFound FROM User WHERE username = %s"
@@ -212,7 +212,7 @@ def getUserTrashFound(username):
         cur.close()
 
 def getUserCleaned(username):
-    cur = conn.cursor()
+    conn, cur = get_connection()
     try:
         data = (username,)
         query = "SELECT trashCleaned FROM User WHERE username = %s"
