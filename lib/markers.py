@@ -7,7 +7,7 @@ from datetime import datetime
 from lib.databaseConnectionFront import get_connection
 
 # Function to create a marker with icons and indicators (input fields)
-def create_marker_type_selector(app_display, parent, marker_type_var):
+def create_marker_type_selector(app_display, parent, marker_type_var, bgcol='white'):
     icon_urls = {
         'light': 'https://cdn-icons-png.flaticon.com/512/3756/3756715.png',
         'mild': 'https://cdn-icons-png.flaticon.com/512/3756/3756712.png',
@@ -24,7 +24,7 @@ def create_marker_type_selector(app_display, parent, marker_type_var):
     icon_size = 55
 
     # Create a frame for the selector
-    selector_frame = Frame(parent, bg="white")
+    selector_frame = Frame(parent, bg=bgcol)
     selector_frame.grid(row=0, column=0, columnspan=4, pady=(4, 10), sticky="ew")
 
     for i in range(4):
@@ -33,7 +33,7 @@ def create_marker_type_selector(app_display, parent, marker_type_var):
     # Function to select marker type and update indicator
     def select_type(mtype):
         for mt, widgets in app_display.marker_icons.items():
-            widgets['indicator'].config(bg='white')
+            widgets['indicator'].config(bg=bgcol)
         app_display.marker_icons[mtype]['indicator'].config(bg=color_map[mtype])
         marker_type_var.set(mtype)
      
@@ -46,14 +46,14 @@ def create_marker_type_selector(app_display, parent, marker_type_var):
         btn = Button(
             selector_frame,
             image=img_tk,
-            bg="white",
+            bg=bgcol,
             borderwidth=0,
             command=lambda mt=mtype: select_type(mt)
         )
         btn.image = img_tk
         btn.grid(row=0, column=idx, padx=8, pady=(0,2), sticky="ew")
 
-        indicator = Label(selector_frame, bg="white", width=2, height=1)
+        indicator = Label(selector_frame, bg=bgcol, width=2, height=1)
         indicator.grid(row=1, column=idx, pady=(0, 4))
         app_display.marker_icons[mtype]['indicator'] = indicator
 
@@ -62,14 +62,28 @@ def create_marker_type_selector(app_display, parent, marker_type_var):
 def draw_markers_page(self):
     self.clear_screen()
 
+    if self.settings['theme'] == 'Light':
+        colour = 'white'
+        highlight = 'black'
+    else:
+        colour = "#2A2A2E"
+        highlight = 'white'
+    
+    if self.settings['textsize'] == 'Normal':
+        textsize = 20
+        smalltext = 11
+    else:
+        textsize = 25
+        smalltext = 20
+
     # Top header
     self.cobjects.extend([
-        self.c.create_text(20, 8, fill='#3b7f3b', font='Arial 20', text='Markers', anchor='nw')
+        self.c.create_text(20, 8, fill='#3b7f3b', font=f'Arial {textsize}', text='Markers', anchor='nw')
     ])
 
     # Create the bottom bar
     bottom_bar_height = 0.1 * self.height
-    bottom_bar = Label(self.window, bg="white", anchor='sw')
+    bottom_bar = Label(self.window, bg=colour, anchor='sw')
     bottom_bar.place(relx=0, rely=1, anchor='sw', relwidth=1, height=bottom_bar_height)
     self.widgets.append(bottom_bar)
 
@@ -102,7 +116,7 @@ def draw_markers_page(self):
         btn = Button(
             self.window,
             image=self.nav_icons[name],
-            bg="white",
+            bg=colour,
             relief="flat",
             borderwidth=0,
             highlightthickness=0,
@@ -123,7 +137,7 @@ def draw_markers_page(self):
     from tkinter import Frame
 
     # Frame for input fields
-    input_frame = Frame(self.window, bg="white")
+    input_frame = Frame(self.window, bg=colour)
     input_frame.place(relx=0.5, rely=0.18, anchor="n", width=432, height=360)
     self.widgets.append(input_frame)
     for i in range(4):
@@ -131,11 +145,11 @@ def draw_markers_page(self):
 
     # Marker type selector
     marker_type_var = StringVar()
-    create_marker_type_selector(self, input_frame, marker_type_var)  # This should use grid inside
+    create_marker_type_selector(self, input_frame, marker_type_var, colour)  # This should use grid inside
 
     # Image Upload Section
     self.selected_image = None
-    image_label = Label(input_frame, text="No image selected", bg="white", font=("Arial", 11))
+    image_label = Label(input_frame, text="No image selected", bg=colour, font=("Arial", smalltext), fg=highlight)
     image_label.grid(row=2, column=0, columnspan=4, pady=(10, 8), sticky="ew")
     self.widgets.append(image_label)
 
@@ -153,7 +167,7 @@ def draw_markers_page(self):
         bg="#3b7f3b",
         fg="white",
         relief="flat",
-        font=("Arial", 11)
+        font=("Arial", textsize)
     )
     upload_btn.grid(row=1, column=0, columnspan=4, pady=(2, 8), sticky="ew")
     self.widgets.append(upload_btn)
@@ -213,7 +227,7 @@ def draw_markers_page(self):
         command=add_marker,
         bg="#3b7f3b",
         fg="white",
-        font=("Arial", 12, "bold"),
+        font=("Arial", textsize, "bold"),
         relief="flat",
         padx=10,
         pady=6
