@@ -249,6 +249,19 @@ def draw_markers_page(self):
             if 'cur1' in locals():
                 cur1.close()
 
+        # increases points by 10
+        try:
+            query2 = "UPDATE User SET userTrashPoints = userTrashPoints + 10 WHERE userID = %s"
+            conn2, cur2 = get_connection()
+            cur2.execute(query2, (self.user_id,))
+            conn2.commit()
+        except Exception as e:
+            conn2.rollback()
+            messagebox.showerror("Database Error", str(e))
+        finally:
+            if 'cur2' in locals():
+                cur2.close()
+
         try:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             query = """INSERT INTO userGarbage 
