@@ -100,11 +100,8 @@ def open_map(self):
         )
         self.widgets.append(btn)
 
-
-    
-
-    bar_width = 195
-    bar_height = 70  # or int(self.height * 0.1) for 10% of height
+    bar_width = int(self.width * 0.19)  # 20% of width
+    bar_height = int(self.height * 0.09)
 
     top_bar = tk.Frame(
         self.window,
@@ -119,78 +116,48 @@ def open_map(self):
     )
     self.widgets.append(top_bar)
 
-    openMarkerImg = Image.open("images/addTrashMarkerBTN.png")
-    self.addMarkerImg = ImageTk.PhotoImage(openMarkerImg)
-    addMarkerButton = Button(top_bar, image = self.addMarkerImg, command=lambda:draw_markers_page(self))
-    addMarkerButton.place(x=0, y=0, width = bar_width, height = bar_height)
-    self.widgets.append(addMarkerButton)
-
-    
-    
-    
-    
-    # # Create a white circle with green border
-    # circle_size = 50
-    # circle_img = Image.new("RGBA", (circle_size, circle_size), (0, 0, 0, 0))
-    # draw = ImageDraw.Draw(circle_img)
-    # draw.ellipse((0, 0, circle_size-1, circle_size-1), fill="white", outline="#3b7f3b", width=2)
-
-    # # # Load and paste warning icon into the circle
-    # # warning_img = Image.open("images/addTrashMarkerBTN.png")
-    # # warning_img = warning_img.resize((150, 150), 0)
-    # # warningImgSize = 50
-    # # #offset = ((circle_size - warning_img.width)//2, (circle_size - warning_img.height)//2)
-    # # #circle_img.paste(warning_img)
-
-    # # if not hasattr(self, 'icon_images'):
-    # #     self.icon_images = {}
-    # # self.icon_images['warning_circle'] = ImageTk.PhotoImage(warning_img)
-
-    # # Create the warning icon button in the top bar
-    # warning_button = Button(
-    #     top_bar,
-    #     image=self.icon_images['warning_circle'],
-    #     bg="white",
-    #     relief="flat",
-    #     borderwidth=0,
-    #     highlightthickness=0,
-    #     command=lambda:draw_markers_page(self)
-    # )
-    # warning_button.place(
-    #     x=10,
-    #     y=(bar_height - circle_size)//2,
-    #     width=circle_size,
-    #     height=circle_size
-    # )
-    # self.widgets.append(warning_button)
-
     number = str(getMarkerCountForUser(self.user_id))
-    font = ("Arial", 10, "bold")
 
-    # To create text
-    number_label_shadow = tk.Label(
+    # Load plus icon
+    icon_url = "https://cdn-icons-png.flaticon.com/512/14090/14090273.png"
+    icon_bytes = urlopen(icon_url).read()
+    icon_img = Image.open(io.BytesIO(icon_bytes)).resize((40, 40), Image.LANCZOS)
+    icon_tk = ImageTk.PhotoImage(icon_img)
+    if not hasattr(self, 'icon_images'):
+        self.icon_images = {}
+    self.icon_images['add_icon'] = icon_tk
+
+    # Create a frame inside the top_bar for icon and text
+    icon_text_frame = tk.Frame(
         top_bar,
-        text=number,
-        font=font,
-        fg="black",
         bg="white"
     )
-    number_label_shadow.place(
-        x=(10 + 50 + 10)+48,
-        y=((bar_height - 24)//2)+31,
-        height=14
-    )
-    number_label = tk.Label(
-        top_bar,
-        text=(f"{number} Markers"),
-        font=font,
-        fg="#133a6f",
-        bg=(addMarkerButton.cget("bg"))
-    )
-    number_label.place(
-        x=(10 + 50 + 10)+48,
-        y=((bar_height - 24)//2)+31,
-        height=14
-    )
+    icon_text_frame.pack(fill="both", expand=True)
 
-    self.widgets.extend([number_label_shadow, number_label])
+    # Configure three columns: [spacer | number | icon]
+    icon_text_frame.grid_columnconfigure(0, weight=1)  # Spacer expands
+    icon_text_frame.grid_columnconfigure(1, weight=0)  # Number label
+    icon_text_frame.grid_columnconfigure(2, weight=0)  # Icon
+
+    number_label = tk.Label(
+        icon_text_frame,
+        text=f"{number}",
+        font=("Arial", 18, "bold"),
+        fg="#3b7f3b",
+        bg="white",
+        anchor="e"
+    )
+    number_label.grid(row=0, column=1, padx=(10, 10), pady=10, sticky="e")
+
+    addMarkerButton = tk.Button(
+        icon_text_frame,
+        image=self.icon_images['add_icon'],
+        bg="white",
+        relief="flat",
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: draw_markers_page(self)
+    )
+    addMarkerButton.grid(row=0, column=2, padx=(0, 10), pady=10, sticky="e")
+
+    self.widgets.extend([addMarkerButton, number_label])
