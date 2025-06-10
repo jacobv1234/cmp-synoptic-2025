@@ -11,7 +11,7 @@ from lib.welcome import draw_welcome_page
 from lib.settings import draw_settings_page, apply_settings, save_settings
 from lib.markers import draw_markers_page
 from lib.profile import draw_profile_page
-
+from lib.resolvereports import show_marker_title
 
 
 class AppDisplay:
@@ -73,6 +73,9 @@ class AppDisplay:
         
         self.open_welcome_page()
 
+    def open_resolve_report_page(self, marker_data):
+        show_marker_title(self, marker_data)
+        
     def open_markers_page(self):
         self.clear_screen()
         
