@@ -35,14 +35,14 @@ def open_map(self):
     self.map_widget.set_position(-26.2041, 28.0473) # Example coordinates for Johannesburg
     self.map_widget.set_zoom(13)
 
-    # Function to lighten a color by 20%
-    def lighten_color(hex_color):
-        amount=0.2
+    # Function to darkern a color
+    def darken_color(hex_color):
+        amount = 0.3
         hex_color = hex_color.lstrip('#')
         rgb = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
-        lighter_rgb = tuple(min(255, int(c + (255 - c) * amount)) for c in rgb)
-        return '#{:02x}{:02x}{:02x}'.format(*lighter_rgb)
-    
+        darker_rgb = tuple(max(0, int(c - c * amount)) for c in rgb)
+        return '#{:02x}{:02x}{:02x}'.format(*darker_rgb)
+        
 
     try:
         conn, cur = get_connection()
@@ -64,22 +64,18 @@ def open_map(self):
             if garbage_type == 'light':
                 color = '#3b7f3b'  # green
             elif garbage_type == 'mild':
-                color = '#FFD700'  # yellow
+                color = '#808080'  # gray
             elif garbage_type == 'severe':
                 color = '#FFA500'  # orange
             elif garbage_type == 'dangerous':
                 color = '#FF0000'  # red
-            else:
-                color = 'gray'  # default
-            
-            lighter_color = lighten_color(color)  # Lighten the color by 20%
 
             # Add marker to the map
             self.map_widget.set_marker(
                 lat, 
                 lon,
                 marker_color_circle=color,
-                marker_color_outside=lighten_color(color)
+                marker_color_outside=darken_color(color) # Darken the color by 30%
             )
 
     except Exception as e:
