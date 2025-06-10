@@ -86,7 +86,7 @@ def draw_markers_page(self):
 
     # Top header
     self.cobjects.extend([
-        self.c.create_text(20, 8, fill='#3b7f3b', font=f'Arial {textsize}', text='Markers', anchor='nw')
+        self.c.create_text(20, 8, fill='#3b7f3b', font=f'Arial {textsize}', text='Reports', anchor='nw')
     ])
 
     # Create the bottom bar
