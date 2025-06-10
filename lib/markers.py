@@ -1,34 +1,36 @@
-from tkinter import Label, Button, messagebox, filedialog, StringVar, Frame
+from tkinter import Tk, Label, Button, Entry, Frame, StringVar, filedialog, messagebox
 from PIL import Image, ImageTk
 from urllib.request import urlopen
 import io
-import geocoder
+import tkintermapview
 from datetime import datetime
 from lib.databaseConnectionFront import get_connection
 
-# Function to create a marker with icons and indicators (input fields)
+
+# Function to create a marker with icons and indicators 
 def create_marker_type_selector(app_display, parent, marker_type_var, bgcol='white'):
-    icon_urls = {
-        'light': 'https://cdn-icons-png.flaticon.com/512/3756/3756715.png',
-        'mild': 'https://cdn-icons-png.flaticon.com/512/3756/3756712.png',
-        'severe': 'https://cdn-icons-png.flaticon.com/512/3756/3756713.png',
-        'dangerous': 'https://cdn-icons-png.flaticon.com/512/3756/3756714.png'
+    icon_files = {
+        'light': 'images/exclamation-green.png',
+        'mild': 'images/exclamation-grey.png',
+        'severe': 'images/exclamation-yellow.png',
+        'dangerous': 'images/exclamation-red.png'
     }
     color_map = {
-        'light': '#808080',
-        'mild': '#FFD700',
+        'light': '#3b7f3b',
+        'mild': '#808080',
         'severe': '#FFA500',
         'dangerous': '#FF0000',
     }
     app_display.marker_icons = {}
     icon_size = 55
 
-    # Create a frame for the selector
-    selector_frame = Frame(parent, bg=bgcol)
-    selector_frame.grid(row=0, column=0, columnspan=4, pady=(4, 10), sticky="ew")
+    # Keep references to images to prevent garbage collection
+    if not hasattr(app_display, 'marker_icon_images'):
+        app_display.marker_icon_images = []
 
+    # Configure columns for even spacing
     for i in range(4):
-        selector_frame.grid_columnconfigure(i, weight=1, uniform="icon")
+        parent.grid_columnconfigure(i, weight=1, uniform="icon")
 
     # Function to select marker type and update indicator
     def select_type(mtype):
@@ -38,27 +40,33 @@ def create_marker_type_selector(app_display, parent, marker_type_var, bgcol='whi
         marker_type_var.set(mtype)
      
     # Create buttons for each marker type
-    for idx, (mtype, url) in enumerate(icon_urls.items()):
-        img_bytes = urlopen(url).read()
-        img = Image.open(io.BytesIO(img_bytes)).resize((icon_size, icon_size))
-        img_tk = ImageTk.PhotoImage(img)
+    for idx, (mtype, file_path) in enumerate(icon_files.items()):
+        try:
+            img = Image.open(file_path)
+            img.thumbnail((icon_size, icon_size), Image.LANCZOS)
+            img_tk = ImageTk.PhotoImage(img)
+        except Exception as e:
+            print(f"Error loading {file_path}: {e}")
+            continue
+
+        app_display.marker_icon_images.append(img_tk)
         app_display.marker_icons[mtype] = {}
         btn = Button(
-            selector_frame,
+            parent,
             image=img_tk,
             bg=bgcol,
             borderwidth=0,
             command=lambda mt=mtype: select_type(mt)
         )
-        btn.image = img_tk
-        btn.grid(row=0, column=idx, padx=8, pady=(0,2), sticky="ew")
+        btn.grid(row=0, column=idx, padx=10, pady=(0,2), sticky="ew")
 
-        indicator = Label(selector_frame, bg=bgcol, width=2, height=1)
+        indicator = Label(parent, bg=bgcol, width=2, height=1)
         indicator.grid(row=1, column=idx, pady=(0, 4))
         app_display.marker_icons[mtype]['indicator'] = indicator
 
     marker_type_var.set("")
 
+# Main page function
 def draw_markers_page(self):
     self.clear_screen()
 
@@ -82,83 +90,102 @@ def draw_markers_page(self):
     ])
 
     # Create the bottom bar
-    bottom_bar_height = 0.1 * self.height
-    bottom_bar = Label(self.window, bg=colour, anchor='sw')
-    bottom_bar.place(relx=0, rely=1, anchor='sw', relwidth=1, height=bottom_bar_height)
+    bottom_bar_height = 0.1 * self.height  # 10% of the height
+    bottom_bar = Label(
+        self.window,
+        bg=colour,
+        anchor='sw',
+    )
+
+    # Place the bar at the bottom
+    bottom_bar.place(
+        relx=0,
+        rely=1,
+        anchor='sw',
+        relwidth=1,
+        height=bottom_bar_height
+    )
     self.widgets.append(bottom_bar)
 
-    # Navigation icons
-    if not hasattr(self, 'nav_icons'):
-        self.nav_icons = {}
+    if not hasattr(self, 'icon_images'):
+        self.icon_images = {}
 
     icon_size = int(bottom_bar_height * 0.6)
     icons_info = [
         ('back', 'https://cdn-icons-png.flaticon.com/512/6443/6443396.png', self.open_map),
         ('shop', 'https://cdn-icons-png.flaticon.com/512/2838/2838895.png', self.open_shopping_page),
-        ('profile', 'https://cdn-icons-png.flaticon.com/512/1077/1077063.png', lambda: print("Profile clicked")),
+        ('profile', 'https://cdn-icons-png.flaticon.com/512/1077/1077063.png', self.open_profile_page),
         ('settings', 'https://cdn-icons-png.flaticon.com/512/563/563541.png', self.open_settings_page)
     ]
 
     # Calculate spacing for icons
     total_icons = len(icons_info)
     spacing = self.width / (total_icons + 1) 
-    
+
     for idx, (name, url, command) in enumerate(icons_info):
+        # Download image from URL
         image_bytes = urlopen(url).read()
-        img = Image.open(io.BytesIO(image_bytes)).resize((icon_size, icon_size))
-        self.nav_icons[name] = ImageTk.PhotoImage(img)
-        
+        data_stream = io.BytesIO(image_bytes)
+        img = Image.open(data_stream).resize((icon_size, icon_size))
+        self.icon_images[name] = ImageTk.PhotoImage(img)
+
         # Create green overlay
-        green_img = Image.new("RGBA", img.size, (59, 127, 59, 255))
-        green_icon = Image.composite(green_img, img, img.split()[-1])
-        self.nav_icons[name] = ImageTk.PhotoImage(green_icon)
+        green_color = (59, 127, 59, 255)
+        green_img = Image.new("RGBA", img.size, green_color)
+        green_icon = Image.composite(green_img, img, img.split()[-1])  # Use alpha channel
+        self.icon_images[name] = ImageTk.PhotoImage(green_icon)
 
         btn = Button(
             self.window,
-            image=self.nav_icons[name],
+            image=self.icon_images[name],
             bg=colour,
             relief="flat",
             borderwidth=0,
             highlightthickness=0,
             command=command
         )
+        
+        # Calculate x-position for even spacing
+        x_position = spacing * (idx + 1) - (icon_size / 2)
+        
         btn.place(
-            x=spacing * (idx + 1) - (icon_size / 2),
+            x=x_position,
             y=self.height - bottom_bar_height/2 - icon_size/2,
             width=icon_size,
             height=icon_size
         )
         self.widgets.append(btn)
 
-    # make objects fill the screen
-    input_frame_width = int(480 * 0.9)
-    input_frame_height = int(720 * 0.7) 
 
-    from tkinter import Frame
-
-    # Frame for input fields
+    # Input frame for form and map
     input_frame = Frame(self.window, bg=colour)
-    input_frame.place(relx=0.5, rely=0.18, anchor="n", width=432, height=360)
+    input_frame.place(relx=0.5, rely=0.1, anchor="n", width=432, height=550)
     self.widgets.append(input_frame)
     for i in range(4):
         input_frame.grid_columnconfigure(i, weight=1)
 
     # Marker type selector
     marker_type_var = StringVar()
-    create_marker_type_selector(self, input_frame, marker_type_var, colour)  # This should use grid inside
+    create_marker_type_selector(self, input_frame, marker_type_var, colour)
+
+    # Title Entry
+    title_label = Label(input_frame, text="Title:", bg=colour, font=("Arial", smalltext), fg=highlight)
+    title_label.grid(row=2, column=0, columnspan=1, pady=(10, 2), padx=(10, 2), sticky="w")
+
+    self.title_entry = Entry(input_frame, font=("Arial", smalltext), bg="white", fg="black")
+    self.title_entry.grid(row=2, column=1, columnspan=3, pady=(10, 2), padx=(2, 10), sticky="ew")
 
     # Image Upload Section
     self.selected_image = None
-    image_label = Label(input_frame, text="No image selected", bg=colour, font=("Arial", smalltext), fg=highlight)
-    image_label.grid(row=2, column=0, columnspan=4, pady=(10, 8), sticky="ew")
-    self.widgets.append(image_label)
 
-    # Function to upload an image
     def upload_image():
         file_path = filedialog.askopenfilename(filetypes=[("Image Files", "*.png *.jpg *.jpeg")])
         if file_path:
             self.selected_image = file_path
             image_label.config(text=file_path.split("/")[-1])
+        else:
+            self.selected_image = None
+            image_label.config(text="No image selected")
 
     upload_btn = Button(
         input_frame,
@@ -167,53 +194,77 @@ def draw_markers_page(self):
         bg="#3b7f3b",
         fg="white",
         relief="flat",
-        font=("Arial", textsize)
+        font=("Arial", smalltext)
     )
-    upload_btn.grid(row=1, column=0, columnspan=4, pady=(2, 8), sticky="ew")
+    upload_btn.grid(row=3, column=0, columnspan=4, pady=(2, 10), sticky="ew")
     self.widgets.append(upload_btn)
 
-    # function for adding markers to the database
+    image_label = Label(input_frame, text="No image selected", bg=colour, font=("Arial", smalltext), fg=highlight)
+    image_label.grid(row=4, column=0, columnspan=4, pady=(2, 2), sticky="ew")
+    self.widgets.append(image_label)
+
+    # Map widget
+    self.selected_coords = None  # To store map coordinates
+
+    map_widget = tkintermapview.TkinterMapView(input_frame, width=400, height=200, corner_radius=0)
+    map_widget.grid(row=5, column=0, columnspan=4, pady=(0, 10), sticky="ew")
+
+    # Set default position (Johannesburg)
+    map_widget.set_position(-26.2041, 28.0473)
+    map_widget.set_zoom(10)
+
+    # Map click handler
+    def map_click_event(coordinates_tuple):
+        self.selected_coords = coordinates_tuple
+        map_widget.delete_all_marker()
+        map_widget.set_marker(coordinates_tuple[0], coordinates_tuple[1])
+
+    map_widget.add_left_click_map_command(map_click_event)
+    self.widgets.append(map_widget)
+
+    # Add Marker Button
     def add_marker():
         marker_type = marker_type_var.get()
-        gps = geocoder.ip('me').latlng
-        
+        title = self.title_entry.get().strip()
         if not marker_type:
             messagebox.showerror("Error", "Please select a marker type!")
             return
-            
-        try:
-            # Get current datetime
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        if not title:
+            messagebox.showerror("Error", "Please enter a title!")
+            return
+        if not self.selected_coords:
+            messagebox.showerror("Error", "Please select a location on the map!")
+            return
 
-            # SQL database query to insert markers
+        try:
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             query = """INSERT INTO userGarbage 
-                    (garbageType, garbageCoord, userID1, garbagePic1, garbageDate1)
-                    VALUES (%s, ST_GeomFromText(%s), %s, %s, %s)"""
-            
-            # Read image (BLOB)
+                    (garbageType, garbageCoord, userID1, garbagePic1, garbageDate1, garbageName)
+                    VALUES (%s, ST_GeomFromText(%s), %s, %s, %s, %s)"""
+            lat, lon = self.selected_coords
+            gps_wkt = f'POINT({lon} {lat})'
             image_blob = None
             if self.selected_image:
                 with open(self.selected_image, "rb") as f:
                     image_blob = f.read()
-            
-            # Prepare GPS
-            gps_wkt = f'POINT({gps[1]} {gps[0]})' if gps else None
-            
-            # Parameters for the query
             params = (
                 marker_type,
                 gps_wkt,
                 self.user_id,
-                image_blob, 
-                now
+                image_blob,
+                now,
+                title
             )
-            
-            # Execute query
             conn, cur = get_connection()
             cur.execute(query, params)
             conn.commit()
+            self.title_entry.delete(0, 'end')
+            self.selected_image = None
+            image_label.config(text="No image selected")
+            map_widget.delete_all_marker()
+            marker_type_var.set("")
+            self.selected_coords = None
             messagebox.showinfo("Success", "Marker added successfully!")
-            
         except Exception as e:
             conn.rollback()
             messagebox.showerror("Database Error", str(e))
@@ -232,6 +283,5 @@ def draw_markers_page(self):
         padx=10,
         pady=6
     )
-    add_btn.grid(row=3, column=0, columnspan=4, pady=(12, 2), sticky="ew")
+    add_btn.grid(row=6, column=0, columnspan=4, pady=(12, 2), sticky="ew")
     self.widgets.append(add_btn)
-
