@@ -236,6 +236,19 @@ def draw_markers_page(self):
             messagebox.showerror("Error", "Please select a location on the map!")
             return
 
+        # Updates trashFound in user
+        try:
+            query1 = "UPDATE User SET trashFound = trashFound + 1 WHERE userID = %s"
+            conn1, cur1 = get_connection()
+            cur1.execute(query1, (self.user_id,))
+            conn1.commit()
+        except Exception as e:
+            conn1.rollback()
+            messagebox.showerror("Database Error", str(e))
+        finally:
+            if 'cur1' in locals():
+                cur1.close()
+
         try:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             query = """INSERT INTO userGarbage 
