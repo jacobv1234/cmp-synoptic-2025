@@ -8,7 +8,7 @@ from lib.databaseConnectionFront import get_connection
 
 
 # Function to create a marker with icons and indicators 
-def create_marker_type_selector(app_display, parent, marker_type_var, bgcol='white'):
+def create_marker_type_selector(app_display, parent, marker_type_var, bgcol):
     icon_files = {
         'light': 'images/exclamation-green.png',
         'mild': 'images/exclamation-grey.png',
@@ -172,7 +172,7 @@ def draw_markers_page(self):
     title_label = Label(input_frame, text="Title:", bg=colour, font=("Arial", smalltext), fg=highlight)
     title_label.grid(row=2, column=0, columnspan=1, pady=(10, 2), padx=(10, 2), sticky="w")
 
-    self.title_entry = Entry(input_frame, font=("Arial", smalltext), bg="white", fg="black")
+    self.title_entry = Entry(input_frame, font=("Arial", smalltext), bg=colour, fg="black")
     self.title_entry.grid(row=2, column=1, columnspan=3, pady=(10, 2), padx=(2, 10), sticky="ew")
 
     # Image Upload Section

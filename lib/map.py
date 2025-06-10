@@ -157,7 +157,7 @@ def open_map(self):
 
     top_bar = tk.Frame(
         self.window,
-        bg="white",
+        bg=colour,
         width=bar_width,
         height=bar_height
     )
@@ -182,7 +182,7 @@ def open_map(self):
     # Create a frame inside the top_bar for icon and text
     icon_text_frame = tk.Frame(
         top_bar,
-        bg="white"
+        bg=colour
     )
     icon_text_frame.pack(fill="both", expand=True)
 
@@ -196,7 +196,7 @@ def open_map(self):
         text=f"{number}",
         font=("Arial", 18, "bold"),
         fg="#3b7f3b",
-        bg="white",
+        bg=colour,
         anchor="e"
     )
     number_label.grid(row=0, column=1, padx=(10, 10), pady=10, sticky="e")
@@ -204,7 +204,7 @@ def open_map(self):
     addMarkerButton = tk.Button(
         icon_text_frame,
         image=self.icon_images['add_icon'],
-        bg="white",
+        bg=colour,
         relief="flat",
         borderwidth=0,
         highlightthickness=0,
