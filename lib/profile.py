@@ -53,15 +53,17 @@ def draw_profile_page(self):
 
     #Profile Frame Logic
     self.profileFrame = Frame(self.window, bg=colour)
-    self.profileFrame.place(relx=0.20, rely=0.0575, anchor='nw')
+    self.profileFrame.place(relx=0.5, rely=0.0575, anchor='n')
     self.widgets.append(self.profileFrame)
     
-    #self.cobjects.append(self.c.create_rectangle(275, 200, 40, 40, fill="", outline=highlight))
+    
 
 
     try:
         userProfilePicture = Image.open(BytesIO(self.getUserPfp)).resize((200, 150))
         self.addProfileImg = ImageTk.PhotoImage(userProfilePicture)
+
+        self.cobjects.append(self.c.create_rectangle(100, 200, self.width-100, 40, fill="", outline=highlight))
 
     except UnidentifiedImageError:
         self.addProfileImg = PhotoImage(width=200,height=150)
@@ -75,7 +77,7 @@ def draw_profile_page(self):
     #Username Frame Logic
 
     self.usernameFrame = Frame(self.window, bg=colour)
-    self.usernameFrame.place(relx=0.19, rely=0.30, anchor='nw')
+    self.usernameFrame.place(relx=0.5, rely=0.30, anchor='center')
     self.widgets.append(self.usernameFrame)
 
     usernameLabel = Label(self.usernameFrame, text=self.username, bg=colour, fg=highlight, font=(f"Arial, {textsize} bold")) 
@@ -86,7 +88,7 @@ def draw_profile_page(self):
 
     
     self.statsFrame = Frame(self.window, bg='white')
-    self.statsFrame.place(relx=0.17, rely=0.40, anchor='nw')
+    self.statsFrame.place(relx=0.5, rely=0.40, anchor='n')
     self.widgets.append(self.statsFrame)
     headingFont= font.Font(family="Arial", size=textsize, underline=True)
     userTrashFoundLabel = Label(self.statsFrame, text=f"User Stats", bg=colour, font=headingFont, fg=highlight) 
@@ -97,7 +99,7 @@ def draw_profile_page(self):
     #User stats Frame Logic - trash found
 
     self.statsFrame = Frame(self.window, bg=colour)
-    self.statsFrame.place(relx=0.17, rely=0.50, anchor='nw')
+    self.statsFrame.place(relx=0.5, rely=0.50, anchor='n')
     self.widgets.append(self.statsFrame)
 
     userTrashFoundLabel2 = Label(self.statsFrame, text=f"Total Trash Marked: {self.getUserTrashFound}", bg=colour, fg=highlight, font=(f"Arial, {smalltext}")) 
@@ -109,7 +111,7 @@ def draw_profile_page(self):
 
     
     self.statsFrameTwo = Frame(self.window, bg=colour)
-    self.statsFrameTwo.place(relx=0.17, rely=0.60, anchor='nw')
+    self.statsFrameTwo.place(relx=0.5, rely=0.60, anchor='n')
     self.widgets.append(self.statsFrameTwo)
     userTrashCleaned = Label(self.statsFrameTwo, text=f"Total Trash Cleaned:{self.getUserCleaned}", bg=colour,fg=highlight, font=(f"Arial, {smalltext}")) 
 
