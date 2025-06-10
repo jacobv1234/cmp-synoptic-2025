@@ -1,5 +1,5 @@
 # shopping.py
-from tkinter import Button, Label, Frame, Checkbutton, BooleanVar, PhotoImage
+from tkinter import Button, Label, Frame, Checkbutton, BooleanVar, PhotoImage, font
 #from tkinter .messagebox import showinfo
 from PIL import Image, ImageTk
 import io
@@ -20,13 +20,24 @@ def draw_shopping_page(self):
         highlight = 'white'
     
     if self.settings['textsize'] == 'Normal':
-        textsize = 15
-        smalltext = 12
+        textsize = 12
+        smalltext = 8
         bigtext = 30
     else:
         textsize = 20
         smalltext = 20
         bigtext = 30
+
+    #Shop Heading
+
+    headingFrame = Frame(self.window, bg=colour)
+    headingFrame.place(relx=0.64, rely=0.05, anchor='ne')
+    self.widgets.append(headingFrame)
+
+    headingFont= font.Font(family="Arial", size=16)
+    coin_label = Label(headingFrame, text="Profile Image Cosmetic Shop", bg=colour, fg=highlight, font=headingFont)
+    coin_label.pack(side='left')
+
 
     # Display coin icon
     coin_url = "https://cdn-icons-png.flaticon.com/512/138/138292.png"
