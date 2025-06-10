@@ -238,6 +238,7 @@ def draw_markers_page(self):
 
         # Updates trashFound in user
         try:
+            
             query1 = "UPDATE User SET trashFound = trashFound + 1 WHERE userID = %s"
             conn1, cur1 = get_connection()
             cur1.execute(query1, (self.user_id,))

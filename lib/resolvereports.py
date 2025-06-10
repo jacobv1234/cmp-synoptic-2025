@@ -116,6 +116,30 @@ def show_marker_title(app_instance, marker_data):
     app_instance.widgets.append(image_label_upload)
 
     def resolve_marker():
+        try: 
+            query1 = "UPDATE User SET trashCleaned = trashCleaned + 1 WHERE userID = %s"
+            conn1, cur1 = get_connection()
+            cur1.execute(query1, (app_instance.user_id,))
+            conn1.commit()
+        except Exception as e:
+            conn1.rollback()
+            messagebox.showerror("Database Error", str(e))
+        finally:
+            if 'cur1' in locals():
+                cur1.close()
+        
+        try:
+            query2 = "UPDATE User SET userTrashPoints = userTrashPoints + 20 WHERE userID = %s"
+            conn2, cur2 = get_connection()
+            cur2.execute(query2, (app_instance.user_id,))
+            conn2.commit()
+        except Exception as e:
+            conn2.rollback()
+            messagebox.showerror("Database Error", str(e))
+        finally:
+            if 'cur2' in locals():
+                cur2.close()
+        
         try:
             # Read image bytes if an image was selected
             image_bytes = None
@@ -141,6 +165,7 @@ def show_marker_title(app_instance, marker_data):
         finally:
             if 'cur' in locals(): cur.close()
             if 'conn' in locals(): conn.close()
+        
 
     resolve_btn = Button(
         input_frame,
