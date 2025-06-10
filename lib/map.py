@@ -47,20 +47,29 @@ def open_map(self):
     try:
         conn, cur = get_connection()
 
-        # Fetch garbage coordinates and types from the database
+        # Fetch garbage coordinates, types, and IDs from the database that are not cleaned
         cur.execute("""
             SELECT 
+                garbageID,
                 ST_AsText(garbageCoord) AS wkt,
-                garbageType 
+                garbageType,
+                garbageName,
+                garbageDate1,
+                garbageStatus,
+                userID1
             FROM userGarbage
+            WHERE garbageStatus IS NULL
         """)
 
+        results = cur.fetchall()
+        print(f"Number of markers found: {len(results)}")
+
         # Fetch all results
-        for wkt, garbage_type in cur.fetchall():
+        for garbage_id, wkt, garbage_type, garbage_name, garbage_date, garbage_status, user_id in results:
             coords = wkt.replace('POINT(', '').replace(')', '').split()
             lon, lat = map(float, coords)
             
-            # Explicit color selection with if-else
+            # Explicit color selection
             if garbage_type == 'light':
                 color = '#3b7f3b'  # green
             elif garbage_type == 'mild':
@@ -70,12 +79,25 @@ def open_map(self):
             elif garbage_type == 'dangerous':
                 color = '#FF0000'  # red
 
-            # Add marker to the map
-            self.map_widget.set_marker(
-                lat, 
+            # Create marker data dictionary to store in the marker
+            marker_data = {
+                'id': garbage_id,
+                'name': garbage_name,
+                'type': garbage_type,
+                'coordinates': (lat, lon),
+                'report_date': garbage_date,
+                'status': garbage_status,
+                'reporter_id': user_id
+            }
+
+            # Add marker to the map with click handler and data
+            marker = self.map_widget.set_marker(
+                lat,
                 lon,
                 marker_color_circle=color,
-                marker_color_outside=darken_color(color) # Darken the color by 30%
+                marker_color_outside=darken_color(color),
+                command=lambda marker: self.open_resolve_report_page(marker.data),
+                data=marker_data
             )
 
     except Exception as e:
@@ -83,7 +105,7 @@ def open_map(self):
     finally:
         if 'cur' in locals(): cur.close()
         if 'conn' in locals(): conn.close()
-    
+
 
     # Create the bottom bar
     bottom_bar_height = 0.1 * self.height  # 10% of the height
