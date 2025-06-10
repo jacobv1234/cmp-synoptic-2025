@@ -2,8 +2,8 @@ from tkinter import *
 from tkinter import font
 from PIL import Image, ImageTk, UnidentifiedImageError
 from json import loads, dumps
-from lib.databaseConnectionFront import getUserIcon, getUserTrashFound, getUserCleaned
-from io import BytesIO
+from lib.databaseConnectionFront import getUserIcon, getUserTrashFound, getUserCleaned, getAllUserPfps
+from io import BytesIO 
 #from lib.appdisplay import createPfpRectangle
 
 def draw_profile_page(self):
@@ -77,7 +77,7 @@ def draw_profile_page(self):
     #Username Frame Logic
 
     self.usernameFrame = Frame(self.window, bg=colour)
-    self.usernameFrame.place(relx=0.5, rely=0.30, anchor='center')
+    self.usernameFrame.place(relx=0.5, rely=0.32, anchor='center')
     self.widgets.append(self.usernameFrame)
 
     usernameLabel = Label(self.usernameFrame, text=self.username, bg=colour, fg=highlight, font=(f"Arial, {textsize} bold")) 
@@ -118,8 +118,53 @@ def draw_profile_page(self):
     userTrashCleaned.pack(side='bottom')
     self.widgets.append(userTrashCleaned)
 
-
-
+    #Subheading for choosing user picture frame logic
 
     
+    self.profilePicSubH = Frame(self.window, bg=colour)
+    self.profilePicSubH.place(relx=0.5, rely=0.70, anchor='n')
+    self.widgets.append(self.profilePicSubH)
+
+    subHeadingLabel = Label(self.profilePicSubH, text=f"Select your acquired profile picture:", bg=colour, fg=highlight, font=(f"Arial, 13")) 
     
+    subHeadingLabel.pack(side='left')
+    self.widgets.append(subHeadingLabel)
+
+
+    #User profile pic selection frame logic
+
+    self.selectProfileFrame = Frame(self.window, bg=colour)
+    self.selectProfileFrame.place(relx=0.5, rely=0.80, anchor='n')
+    self.widgets.append(self.selectProfileFrame)
+
+    defaultPfpName = "CleanMEerkat"
+    # defaultuserProfilePicture = Image.open("images/cleanmeakat.png")
+    # defaultPicture = BytesIO()
+    # defaultuserProfilePicture.save(defaultPicture, format='PNG')
+    currentUserProfileImageNames = list(getAllUserPfps(self.username))
+    currentUserProfileImageNames.append(defaultPfpName)
+    self.selectedPfp = StringVar(self.selectProfileFrame)
+    self.selectedPfp.set(defaultPfpName)
+
+            
+    options = OptionMenu(self.selectProfileFrame, self.selectedPfp, *currentUserProfileImageNames)
+    options.pack(side="top")
+
+    
+
+    #User Profile pic button to update
+
+    
+    self.choosePfpFrame = Frame(self.window, bg=colour)
+    self.choosePfpFrame.place(relx=0.5, rely=0.90, anchor='n')
+    self.widgets.append(self.choosePfpFrame)
+
+
+    from lib.appdisplay import AppDisplay
+    selectPfpBtn = Button(self.choosePfpFrame, text= "Select Chosen Profile Picture", font=f'Arial 10', fg=highlight,
+                       bg=colour, relief="raised", command=lambda:self.setProfilePicture(self.selectedPfp, self.username), compound='top')
+    selectPfpBtn.pack(anchor='center')
+    self.widgets.append(selectPfpBtn)
+
+
+

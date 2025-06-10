@@ -250,3 +250,52 @@ def getUserCleaned(username):
         return 0
     finally:
         cur.close()
+
+def getAllUserPfps(username):
+    conn, cur = get_connection()
+    picIDList = []
+    try:
+        data = (username,)
+        query = "SELECT itemID FROM userItems WHERE username = %s"
+        cur.execute(query, data)
+        userPicIDs = cur.fetchall()
+        conn.commit()
+        for i in userPicIDs:
+            for j in i:
+                picIDList.append(j)
+        itemPicNamesList = []
+        for itemID in picIDList:
+            data = (itemID,)
+            query = "SELECT itemName FROM pointShop WHERE itemID = %s"
+            cur.execute(query, data)
+            itemPicName = cur.fetchone()[0]
+            itemPicNamesList.append(itemPicName)
+        return itemPicNamesList
+
+    
+    except Exception as e:
+        print(e)
+        return 0
+    finally:
+        cur.close()
+
+def updateProfilePicture(selectedPfpName, username):
+    conn, cur = get_connection()
+    try:
+        print(selectedPfpName)
+        data = (selectedPfpName,)
+        query = "SELECT itemPic FROM pointShop WHERE itemName = %s"
+        cur.execute(query, data)
+        userPicBinary = cur.fetchone()[0]
+        updateUserPfpData = (userPicBinary, username)
+        updateUserPfpQuery = "UPDATE User SET userPic = %s WHERE username = %s"
+        cur.execute(updateUserPfpQuery, updateUserPfpData)
+        conn.commit()
+        return True
+
+    
+    except Exception as e:
+        print(e)
+        return 0
+    finally:
+        cur.close()
