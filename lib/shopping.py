@@ -70,7 +70,7 @@ def draw_shopping_page(self):
     #Generate the item shop list from DB
 
     shopListFrame = Frame(self.window, bg=colour)
-    shopListFrame.place(relx=0.55, rely=0.1, anchor='ne')
+    shopListFrame.place(relx=0.05, rely=0.1, anchor='nw')
     self.widgets.append(shopListFrame)
 
     # generate selector images
@@ -95,9 +95,9 @@ def draw_shopping_page(self):
         checkbox = Checkbutton(shopListFrame, text=f"    {i}: {j} TP", variable=checkItem, fg=highlight,
             font=f'Arial {textsize}', pady= 25-textsize, image = self.images['off'], selectimage = self.images['on'],
             indicatoron=False, compound='left', relief='solid', background=colour, borderwidth=0,
-            activebackground=colour, activeforeground=highlight, selectcolor=colour)
+            activebackground=colour, activeforeground=highlight, selectcolor=colour, justify='left')
         
-        checkbox.pack(side="top")
+        checkbox.pack(side="top",anchor='nw')
         self.widgets.append(checkbox)
             
             #checkbox = Checkbutton(shopListFrame, text=f"{i,j}", variable=checkItem)
@@ -141,7 +141,7 @@ def draw_shopping_page(self):
     self.images['trolley'] = ImageTk.PhotoImage(img)
     trolley_btn = Button(self.window, image=self.images['trolley'], font=f'Arial {textsize}', fg=highlight,
                        bg=colour, relief="flat", command=self.getChecked, text="Update\nBasket", compound='top')
-    trolley_btn.place(relx=0.75,rely=0.25,anchor='center')
+    trolley_btn.place(relx=0.85,rely=0.25,anchor='center')
     self.widgets.append(trolley_btn)
 
     #basketLabel = Label(self.window, text=f"Add selected to cart", font=('Arial', 10), bg='white')

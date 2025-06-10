@@ -227,6 +227,8 @@ def test_buy_item_success(display, mocker):
     display.higherFrame = None
     # Mock label
     mock_label = mocker.MagicMock()
+    # Mock selected item
+    mock_itemsSelected = mocker.MagicMock()
     # Patch dependencies
     # return_value = true for subtractCost if check
     mocker.patch("lib.appdisplay.purchaseSubtraction", return_value=True)
@@ -239,7 +241,7 @@ def test_buy_item_success(display, mocker):
     display.window = mocker.MagicMock()
 
     # Call buyItem
-    display.buyItem(420)
+    display.buyItem(420, mock_itemsSelected)
 
     # asserts
     assert mock_label.pack.called
@@ -254,6 +256,8 @@ def test_buy_item_fail(display, mocker):
 
     # Mock label
     mock_label = mocker.MagicMock()
+    # Mock itemsSelected
+    mock_itemsSelected = mocker.MagicMock()
     # Patch dependencies
     # return_value = false for subtractCost if check so it goes to the elseif
     mocker.patch("lib.appdisplay.purchaseSubtraction", return_value=False)
@@ -266,7 +270,7 @@ def test_buy_item_fail(display, mocker):
     display.window = mocker.MagicMock()
 
     # Call buyItem
-    display.buyItem(123)
+    display.buyItem(123, mock_itemsSelected)
 
     # asserts
     assert mock_label.pack.called
