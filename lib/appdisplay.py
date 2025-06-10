@@ -261,7 +261,7 @@ class AppDisplay:
         toptextLabel.pack(side="top")
         self.widgets.append(toptextLabel)
 
-        itemListLabel = Label(self.shopBasketFrame, text=f"{str(itemsSelected)[1:-1].replace("'",'')}", font=('Arial', textsize), bg=colour,fg=highlight)
+        itemListLabel = Label(self.shopBasketFrame, text=f"{str(itemsSelected)[1:-1].replace("'",'').replace(', ','\n')}", font=('Arial', textsize), bg=colour,fg=highlight)
         itemListLabel.pack(side="top")
         self.widgets.append(itemListLabel)
 
