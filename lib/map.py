@@ -1,11 +1,12 @@
 import tkintermapview
 import tkinter as tk
-from tkinter import Label, Button, PhotoImage
-from PIL import Image, ImageTk, ImageDraw
+from tkinter import Label, Button, messagebox
+from PIL import Image, ImageTk
 import io
 from urllib.request import urlopen
 from lib.markers import draw_markers_page
 from lib.databaseConnectionFront import getMarkerCountForUser
+from lib.databaseConnectionFront import get_connection
 
 def open_map(self):
     # Remove all widgets from the window
@@ -28,10 +29,64 @@ def open_map(self):
 
     # Place the map widget to fill the entire window
     self.map_widget.place(relx=0, rely=0, relwidth=1, relheight=1)
+
     # Configure map settings
     self.map_widget.set_position(-26.2041, 28.0473) # Example coordinates for Johannesburg
     self.map_widget.set_zoom(13)
-    self.map_widget.set_marker(-26.2041, 28.0473)
+
+    # Function to lighten a color by 20%
+    def lighten_color(hex_color):
+        amount=0.2
+        hex_color = hex_color.lstrip('#')
+        rgb = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        lighter_rgb = tuple(min(255, int(c + (255 - c) * amount)) for c in rgb)
+        return '#{:02x}{:02x}{:02x}'.format(*lighter_rgb)
+    
+
+    try:
+        conn, cur = get_connection()
+
+        # Fetch garbage coordinates and types from the database
+        cur.execute("""
+            SELECT 
+                ST_AsText(garbageCoord) AS wkt,
+                garbageType 
+            FROM userGarbage
+        """)
+
+        # Fetch all results
+        for wkt, garbage_type in cur.fetchall():
+            coords = wkt.replace('POINT(', '').replace(')', '').split()
+            lon, lat = map(float, coords)
+            
+            # Explicit color selection with if-else
+            if garbage_type == 'light':
+                color = '#3b7f3b'  # green
+            elif garbage_type == 'mild':
+                color = '#FFD700'  # yellow
+            elif garbage_type == 'severe':
+                color = '#FFA500'  # orange
+            elif garbage_type == 'dangerous':
+                color = '#FF0000'  # red
+            else:
+                color = 'gray'  # default
+            
+            lighter_color = lighten_color(color)  # Lighten the color by 20%
+
+            # Add marker to the map
+            self.map_widget.set_marker(
+                lat, 
+                lon,
+                marker_color_circle=color,
+                marker_color_outside=lighten_color(color)
+            )
+
+    except Exception as e:
+        messagebox.showerror("Database Error", f"Failed to load markers: {str(e)}")
+    finally:
+        if 'cur' in locals(): cur.close()
+        if 'conn' in locals(): conn.close()
+    
 
     # Create the bottom bar
     bottom_bar_height = 0.1 * self.height  # 10% of the height
