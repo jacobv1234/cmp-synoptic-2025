@@ -151,7 +151,10 @@ def getAllShopPrices():
 def getMarkerCountForUser(user_id):
     conn, cur = get_connection()
     try:
-        query = "SELECT COUNT(*) FROM userGarbage WHERE userID1 = %s"
+        query = """
+            SELECT COUNT(*) FROM userGarbage
+            WHERE userID1 = %s AND (garbageStatus IS NULL OR garbageStatus != 'Cleaned')
+        """
         cur.execute(query, (user_id,))
         count = cur.fetchone()[0]
         return count
@@ -160,6 +163,7 @@ def getMarkerCountForUser(user_id):
         return 0
     finally:
         cur.close()
+
 
 def purchaseSubtraction(totalShopSum, username, itemsSelected):
     conn, cur = get_connection()
