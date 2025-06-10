@@ -35,6 +35,12 @@ def draw_shopping_page(self):
     coin_img = Image.open(coin_stream).resize((40, 40))
     self.images['coin'] = ImageTk.PhotoImage(coin_img) 
 
+    # Start balance at users account balance
+    from lib.appdisplay import AppDisplay
+    print("HII" + AppDisplay.username)
+    self.currency = getCurrentUserTP(AppDisplay.username)
+    print(self.currency)
+
     # currency logic
     currency_frame = Frame(self.window, bg=colour)
     currency_frame.place(relx=0.95, rely=0.05, anchor='ne')
@@ -47,10 +53,7 @@ def draw_shopping_page(self):
     amount_label.pack(side='left')
     self.widgets.append(amount_label)
     
-    # Start balance at users account balance
-    from lib.appdisplay import AppDisplay
-    print("HII" + AppDisplay.username)
-    self.currency = getCurrentUserTP(AppDisplay.username)
+   
     
 
     #Generate the item shop list from DB

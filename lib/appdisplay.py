@@ -179,7 +179,7 @@ class AppDisplay:
             self.higherFrame = None
             self.open_shopping_page()
 
-    def buyItem(self, priceTotal):
+    def buyItem(self, priceTotal, itemsSelected):
         if self.higherFrame:
             return
         
@@ -197,15 +197,21 @@ class AppDisplay:
         self.itemPurchaseFrame.place(relx=0.50, rely=0.75, anchor='center')
         self.widgets.append(self.itemPurchaseFrame)
 
-        subtractCost = purchaseSubtraction(priceTotal, AppDisplay.username)
-        if subtractCost and hasattr(self, "itemPurchaseFrame"):
+        subtractCost = purchaseSubtraction(priceTotal, AppDisplay.username, itemsSelected)
+        print(subtractCost)
+        if subtractCost !="Has" and subtractCost and hasattr(self, "itemPurchaseFrame"):
             youBoughtLabel = Label(self.itemPurchaseFrame, text=f"Your purchase was successful, thanks for taking care of our city!", font=('Arial', 10), bg='white', foreground="#4F8400")
             youBoughtLabel.pack(side="bottom")
             self.widgets.append(youBoughtLabel)
-        elif not subtractCost:
+        elif subtractCost == False:
             youBoughtLabel = Label(self.itemPurchaseFrame, text=f"You don't have enough TP (Trash Points) to buy your selected items!", font=('Arial', 10), bg='white', foreground="#01593C")
             youBoughtLabel.pack(side="bottom")
             self.widgets.append(youBoughtLabel)
+        elif subtractCost == "Has":
+            youBoughtLabel = Label(self.itemPurchaseFrame, text=f"You already have that item(s)!", font=('Arial', 10), bg='white', foreground="#01593C")
+            youBoughtLabel.pack(side="bottom")
+            self.widgets.append(youBoughtLabel)
+
 
     
     def getChecked(self):
@@ -263,7 +269,7 @@ class AppDisplay:
         totalPriceLabel.pack(side="top")
         self.widgets.append(totalPriceLabel)
 
-        buyBtn = Button(self.shopBasketFrame, font=f'Arial {textsize}', justify='center', background="#3b7f3b", foreground='white',activebackground="#226D22", activeforeground='white',text='Buy Item', command=lambda:self.buyItem(priceTotal))
+        buyBtn = Button(self.shopBasketFrame, font=f'Arial {textsize}', justify='center', background="#3b7f3b", foreground='white',activebackground="#226D22", activeforeground='white',text='Buy Item', command=lambda:self.buyItem(priceTotal, itemsSelected))
         buyBtn.pack(side="top")
         self.widgets.append(buyBtn)
     

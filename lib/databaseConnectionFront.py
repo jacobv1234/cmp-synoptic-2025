@@ -161,7 +161,7 @@ def getMarkerCountForUser(user_id):
     finally:
         cur.close()
 
-def purchaseSubtraction(totalShopSum, username):
+def purchaseSubtraction(totalShopSum, username, itemsSelected):
     conn, cur = get_connection()
     try:
         data = (username,)
@@ -169,9 +169,22 @@ def purchaseSubtraction(totalShopSum, username):
         cur.execute(query, data)
         userTP = cur.fetchone()[0]
         print(userTP)
+        
         newTP = (userTP-totalShopSum)
         if newTP <0:
             return False
+        itemIDList = []
+        for item in itemsSelected:
+            print (f"Item Name: {item}")
+            getItemIDS = "SELECT itemID FROM pointShop WHERE itemName = %s"
+            cur.execute(getItemIDS, (item,))
+            itemID = cur.fetchone()[0]
+            itemIDList.append(itemID)
+        for i in itemIDList:
+            print(f"item ID: {i}")
+            addItemData = ((i), username)
+            addItemQuery = "INSERT INTO userItems (itemID, username) VALUES (%s, %s)"
+            cur.execute(addItemQuery, addItemData)
         updateData = (newTP, str(username))
         print(f"new tp = {newTP} username = {str(username)}")
         updateQuery = "UPDATE User SET userTrashPoints = %s WHERE username = %s"
@@ -179,8 +192,10 @@ def purchaseSubtraction(totalShopSum, username):
         conn.commit()
         return True
     
-    except Exception as e:
-        print(e)
+    except mariadb.Error as e:
+        print(e.errno)
+        if e.errno == 1062:
+            return "Has"
         return 0
     finally:
         cur.close()
