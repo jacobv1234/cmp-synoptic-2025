@@ -22,9 +22,9 @@ def test_create_marker_type_selector_updates_marker_var(mock_app_fixture):
     mock_frame.pack()
 
     mock_marker = StringVar()
-    markers.create_marker_type_selector(mock_app, mock_frame, mock_marker)
+    markers.create_marker_type_selector(mock_app, mock_frame, mock_marker, 'white')
 
-    # For loop that sets the marker to the corresponding marker type, then asserts it matcches
+    # For loop that sets the marker to the corresponding marker type, then asserts it matches
     for mtype in ['light', 'mild', 'severe', 'dangerous']:
         mock_marker.set(mtype)
 
