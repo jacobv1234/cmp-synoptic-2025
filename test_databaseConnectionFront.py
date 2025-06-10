@@ -131,8 +131,11 @@ def test_purchaseSubtraction_success(mock_db, mocker):
     # Call fixture
     mock_connection, mock_cursor = mock_db
     mock_cursor.fetchone.return_value = (100,)
+    # Mock selected item
+    mock_itemsSelected = mocker.MagicMock()
 
-    result = db.purchaseSubtraction(99, "username")
+
+    result = db.purchaseSubtraction(99, "username", mock_itemsSelected)
 
     # Asserts
     assert result is True
@@ -142,8 +145,11 @@ def test_purchaseSubtraction_failure(mock_db, mocker):
     # Call fixture
     mock_connection, mock_cursor = mock_db
     mock_cursor.fetchone.return_value = (1,)
+    # Mock selected item
+    mock_itemsSelected = mocker.MagicMock()
 
-    result = db.purchaseSubtraction(50, "username")
+
+    result = db.purchaseSubtraction(50, "username", mock_itemsSelected)
 
     # Asserts
     assert result is False
