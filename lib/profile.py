@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import font
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, UnidentifiedImageError
 from json import loads, dumps
 from lib.databaseConnectionFront import getUserIcon, getUserTrashFound, getUserCleaned
 from io import BytesIO
@@ -15,6 +15,13 @@ def draw_profile_page(self):
     else:
         colour = '#2A2A2E'
         highlight = 'white'
+    
+    if self.settings['textsize'] == 'Normal':
+        textsize = 20
+        smalltext = 14
+    else:
+        textsize = 25
+        smalltext = 20
 
     # back button
     img = Image.open('images/backArrow.png')
@@ -29,20 +36,7 @@ def draw_profile_page(self):
                font='Arial 40',
                borderwidth=0,
                relief='solid',
-               command=self.open_map),
-        
-        Button(self.window,
-               text='Apply',
-               foreground='#3b7f3b',
-               background=colour,
-               font='Arial 25',
-               borderwidth=0,
-               relief='solid',
-               highlightbackground='#3b7f3b',
-               highlightcolor='#3b7f3b',
-               highlightthickness=2,
-               activeforeground=highlight,
-               command=self.apply_settings)
+               command=self.open_map)
     ])
 
     self.widgets[0].place(x = 10, y = self.height-10, width = 40, height = 40, anchor = 'sw')
@@ -58,58 +52,69 @@ def draw_profile_page(self):
     print(f"VARIABLES FOR USER PAGE {self.username, self.getUserTrashFound, self.getUserCleaned}")
 
     #Profile Frame Logic
-    self.profileFrame = Frame(self.window, bg='white')
-    self.profileFrame.place(relx=0.10, rely=0.0575, anchor='nw')
+    self.profileFrame = Frame(self.window, bg=colour)
+    self.profileFrame.place(relx=0.20, rely=0.0575, anchor='nw')
     self.widgets.append(self.profileFrame)
     
-    self.createProfileRectangle = self.createPfpRectangle()
+    #self.cobjects.append(self.c.create_rectangle(275, 200, 40, 40, fill="", outline=highlight))
 
 
-    userProfilePicture = Image.open(BytesIO(self.getUserPfp)).resize((200, 150))
-    self.addProfileImg = ImageTk.PhotoImage(userProfilePicture)
+    try:
+        userProfilePicture = Image.open(BytesIO(self.getUserPfp)).resize((200, 150))
+        self.addProfileImg = ImageTk.PhotoImage(userProfilePicture)
 
-    pfpLabel = Label(self.profileFrame, image=self.addProfileImg, bg='white')
+    except UnidentifiedImageError:
+        self.addProfileImg = PhotoImage(width=200,height=150)
+        self.addProfileImg.put((highlight,), to=(0, 0, 199, 149))
+        self.addProfileImg.put((colour,), to=(2, 2, 197, 147))
+        
+    pfpLabel = Label(self.profileFrame, image=self.addProfileImg, bg=colour, fg=highlight)
     pfpLabel.pack(side='left')
+    self.widgets.append(pfpLabel)
 
     #Username Frame Logic
 
-    self.usernameFrame = Frame(self.window, bg='white')
-    self.usernameFrame.place(relx=0.39, rely=0.30, anchor='ne')
-    self.widgets.append(self.profileFrame)
+    self.usernameFrame = Frame(self.window, bg=colour)
+    self.usernameFrame.place(relx=0.19, rely=0.30, anchor='nw')
+    self.widgets.append(self.usernameFrame)
 
-    usernameLabel = Label(self.usernameFrame, text=self.username, bg='white', font=("Arial, 20 bold")) 
+    usernameLabel = Label(self.usernameFrame, text=self.username, bg=colour, fg=highlight, font=(f"Arial, {textsize} bold")) 
     usernameLabel.pack(side='left')
+    self.widgets.append(usernameLabel)
 
     #Heading
 
     
     self.statsFrame = Frame(self.window, bg='white')
-    self.statsFrame.place(relx=0.27, rely=0.40, anchor='ne')
-    self.widgets.append(self.profileFrame)
-    headingFont= font.Font(family="Arial", size=18, underline=True)
-    userTrashFoundLabel = Label(self.statsFrame, text=f"User Stats", bg='white', font=headingFont) 
+    self.statsFrame.place(relx=0.17, rely=0.40, anchor='nw')
+    self.widgets.append(self.statsFrame)
+    headingFont= font.Font(family="Arial", size=textsize, underline=True)
+    userTrashFoundLabel = Label(self.statsFrame, text=f"User Stats", bg=colour, font=headingFont, fg=highlight) 
     
     userTrashFoundLabel.pack(side='left')
+    self.widgets.append(userTrashFoundLabel)
 
     #User stats Frame Logic - trash found
 
-    self.statsFrame = Frame(self.window, bg='white')
-    self.statsFrame.place(relx=0.40, rely=0.50, anchor='ne')
-    self.widgets.append(self.profileFrame)
+    self.statsFrame = Frame(self.window, bg=colour)
+    self.statsFrame.place(relx=0.17, rely=0.50, anchor='nw')
+    self.widgets.append(self.statsFrame)
 
-    userTrashFoundLabel = Label(self.statsFrame, text=f"Total Trash Marked: {self.getUserTrashFound}", bg='white', font=("Arial, 14")) 
+    userTrashFoundLabel2 = Label(self.statsFrame, text=f"Total Trash Marked: {self.getUserTrashFound}", bg=colour, fg=highlight, font=(f"Arial, {smalltext}")) 
     
-    userTrashFoundLabel.pack(side='left')
+    userTrashFoundLabel2.pack(side='left')
+    self.widgets.append(userTrashFoundLabel2)
 
     #User stats Frame Logic - trash cleaned
 
     
-    self.statsFrameTwo = Frame(self.window, bg='white')
-    self.statsFrameTwo.place(relx=0.4075, rely=0.60, anchor='ne')
-    self.widgets.append(self.profileFrame)
-    userTrashCleaned = Label(self.statsFrameTwo, text=f"Total Trash Cleaned:{self.getUserCleaned}", bg='white', font=("Arial, 14")) 
+    self.statsFrameTwo = Frame(self.window, bg=colour)
+    self.statsFrameTwo.place(relx=0.17, rely=0.60, anchor='nw')
+    self.widgets.append(self.statsFrameTwo)
+    userTrashCleaned = Label(self.statsFrameTwo, text=f"Total Trash Cleaned:{self.getUserCleaned}", bg=colour,fg=highlight, font=(f"Arial, {smalltext}")) 
 
     userTrashCleaned.pack(side='bottom')
+    self.widgets.append(userTrashCleaned)
 
 
 

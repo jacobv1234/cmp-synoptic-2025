@@ -10,6 +10,7 @@ from lib.databaseConnectionFront import getMarkerCountForUser
 def open_map(self):
     # Remove all widgets from the window
     self.clear_screen()
+    self.window.update()
 
     if self.settings['theme'] == 'Light':
         colour = 'white'
