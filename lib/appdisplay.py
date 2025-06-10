@@ -272,11 +272,6 @@ class AppDisplay:
         buyBtn = Button(self.shopBasketFrame, font=f'Arial {textsize}', justify='center', background="#3b7f3b", foreground='white',activebackground="#226D22", activeforeground='white',text='Buy Item', command=lambda:self.buyItem(priceTotal, itemsSelected))
         buyBtn.pack(side="top")
         self.widgets.append(buyBtn)
-    
-    def createPfpRectangle(self):
-        self.Pfprectangle = self.c.create_rectangle(275, 200, 40, 40, fill="")
-        #self.Pfprectangle.place(relx=0.06, rely=0.05, anchor='nw')
-        #self.widgets.append(self.Pfprectangle)
 
         
           
