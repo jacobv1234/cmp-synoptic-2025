@@ -249,11 +249,11 @@ class AppDisplay:
         print(priceTotal)
 
         
-        if len(itemsSelected) <= 0:
-            if hasattr(self, "shopBasketFrame") and self.shopBasketFrame.winfo_exists:
-                self.shopBasketFrame.destroy()
-                del self.shopBasketFrame
-            return
+        #if len(itemsSelected) <= 0:
+        if hasattr(self, "shopBasketFrame") and self.shopBasketFrame.winfo_exists:
+            self.shopBasketFrame.destroy()
+            del self.shopBasketFrame
+        #    return
         
         self.shopBasketFrame = Frame(self.window, bg=colour)            
         self.shopBasketFrame.place(relx=0.50, rely=0.8, anchor='s')
