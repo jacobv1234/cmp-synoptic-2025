@@ -23,10 +23,12 @@ def draw_shopping_page(self):
         textsize = 12
         smalltext = 8
         bigtext = 30
+        extranewline=''
     else:
         textsize = 20
         smalltext = 20
         bigtext = 30
+        extranewline='\n    '
 
     #Shop Heading
 
@@ -96,7 +98,7 @@ def draw_shopping_page(self):
         checkItem = BooleanVar()
         self.itemInfo.append((checkItem, i, j))
 
-        checkbox = Checkbutton(shopListFrame, text=f"    {i}: {j} TP", variable=checkItem, fg=highlight,
+        checkbox = Checkbutton(shopListFrame, text=f"    {i}: {extranewline}{j} TP", variable=checkItem, fg=highlight,
             font=f'Arial {textsize}', pady= 25-textsize, image = self.images['off'], selectimage = self.images['on'],
             indicatoron=False, compound='left', relief='solid', background=colour, borderwidth=0,
             activebackground=colour, activeforeground=highlight, selectcolor=colour, justify='left')
