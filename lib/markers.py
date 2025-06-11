@@ -86,7 +86,8 @@ def draw_markers_page(self):
 
     # Top header
     self.cobjects.extend([
-        self.c.create_text(20, 8, fill='#3b7f3b', font=f'Arial {textsize}', text='Reports', anchor='nw')
+        self.c.create_text(20, 8, fill='#3b7f3b', font=f'Arial {textsize}', text='Reports', anchor='nw'),
+        self.c.create_text(20,self.height/10, fill='#FF0000',font=f'Arial {textsize-4}', text='Select Severity:', anchor='nw')
     ])
 
     # Create the bottom bar
@@ -159,7 +160,7 @@ def draw_markers_page(self):
 
     # Input frame for form and map
     input_frame = Frame(self.window, bg=colour)
-    input_frame.place(relx=0.5, rely=0.1, anchor="n", width=432, height=550)
+    input_frame.place(relx=0.5, rely=0.15, anchor="n", width=432, height=550)
     self.widgets.append(input_frame)
     for i in range(4):
         input_frame.grid_columnconfigure(i, weight=1)
@@ -170,7 +171,7 @@ def draw_markers_page(self):
 
     # Title Entry
     title_label = Label(input_frame, text="Title:", bg=colour, font=("Arial", smalltext), fg=highlight)
-    title_label.grid(row=2, column=0, columnspan=1, pady=(10, 2), padx=(10, 2), sticky="w")
+    title_label.grid(row=2, column=0, columnspan=1, pady=(20, 2), padx=(10, 2), sticky="w")
 
     self.title_entry = Entry(input_frame, font=("Arial", smalltext), bg=colour, fg="black")
     self.title_entry.grid(row=2, column=1, columnspan=3, pady=(10, 2), padx=(2, 10), sticky="ew")
