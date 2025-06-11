@@ -114,6 +114,14 @@ def getAllShopItems():
     conn, cur = get_connection()
     shopItemList = []
     try:
+        #UPLOAD PROFILE PICTURE BINARY TO DATABASE
+        # userProfilePicture = Image.open("images/cleanmeakatSpecialGold.png")
+        # defaultPicture = BytesIO()
+        # userProfilePicture.save(defaultPicture, format='PNG')
+        # regData = (defaultPicture.getvalue(),)
+        # dbRegInsert = "UPDATE pointShop SET itemPic = %s WHERE itemName = 'CleanMEerkat GOLD' "
+        # cur.execute(dbRegInsert, regData) 
+        # conn.commit()
         getAllItems = "SELECT itemName FROM pointShop"
         cur.execute(getAllItems) #Need to keep data and Sql seperete to avoid sql injections
         getItemList = cur.fetchall()
@@ -299,7 +307,14 @@ def updateProfilePicture(selectedPfpName, username):
 
     
     except Exception as e:
-        print(e)
+        userProfilePicture = Image.open("images/cleanmeakat.png")
+        defaultPicture = BytesIO()
+        userProfilePicture.save(defaultPicture, format='PNG')
+        updateUserPfpData = (defaultPicture.getvalue(), username)
+        updateUserPfpQuery = "UPDATE User SET userPic = %s WHERE username = %s"
+        cur.execute(updateUserPfpQuery, updateUserPfpData)
+        conn.commit()
+
         return 0
     finally:
         cur.close()

@@ -278,7 +278,7 @@ class AppDisplay:
     def setProfilePicture(self, picName, username):
         self.userSelected = picName.get()
         updateProfilePicture(self.userSelected, username)
-        self.window.update()
+        self.open_profile_page()
     
         
           
