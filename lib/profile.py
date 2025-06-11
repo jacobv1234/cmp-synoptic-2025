@@ -111,7 +111,7 @@ def draw_profile_page(self):
 
     
     self.statsFrameTwo = Frame(self.window, bg=colour)
-    self.statsFrameTwo.place(relx=0.5, rely=0.60, anchor='n')
+    self.statsFrameTwo.place(relx=0.5, rely=0.55, anchor='n')
     self.widgets.append(self.statsFrameTwo)
     userTrashCleaned = Label(self.statsFrameTwo, text=f"Total Trash Cleaned:{self.getUserCleaned}", bg=colour,fg=highlight, font=(f"Arial, {smalltext}")) 
 
@@ -122,10 +122,10 @@ def draw_profile_page(self):
 
     
     self.profilePicSubH = Frame(self.window, bg=colour)
-    self.profilePicSubH.place(relx=0.5, rely=0.70, anchor='n')
+    self.profilePicSubH.place(relx=0.5, rely=0.65, anchor='n')
     self.widgets.append(self.profilePicSubH)
 
-    subHeadingLabel = Label(self.profilePicSubH, text=f"Select your acquired profile picture:", bg=colour, fg=highlight, font=(f"Arial, 13")) 
+    subHeadingLabel = Label(self.profilePicSubH, text=f"Select your acquired profile picture:", bg=colour, fg=highlight, font=(f"Arial, {smalltext}")) 
     
     subHeadingLabel.pack(side='left')
     self.widgets.append(subHeadingLabel)
@@ -134,7 +134,7 @@ def draw_profile_page(self):
     #User profile pic selection frame logic
 
     self.selectProfileFrame = Frame(self.window, bg=colour)
-    self.selectProfileFrame.place(relx=0.5, rely=0.80, anchor='n')
+    self.selectProfileFrame.place(relx=0.5, rely=0.7, anchor='n')
     self.widgets.append(self.selectProfileFrame)
 
     defaultPfpName = "CleanMEerkat"
@@ -148,6 +148,10 @@ def draw_profile_page(self):
 
             
     options = OptionMenu(self.selectProfileFrame, self.selectedPfp, *currentUserProfileImageNames)
+    options.config(font = f'Arial {smalltext}',
+        highlightbackground = '#3b7f3b', highlightcolor = '#3b7f3b', highlightthickness = 2, borderwidth = 0,
+        background = colour, foreground = highlight)
+    self.window.nametowidget(options.menuname).config(font = f'Arial {smalltext}',)
     options.pack(side="top")
 
     
@@ -156,13 +160,13 @@ def draw_profile_page(self):
 
     
     self.choosePfpFrame = Frame(self.window, bg=colour)
-    self.choosePfpFrame.place(relx=0.5, rely=0.90, anchor='n')
+    self.choosePfpFrame.place(relx=0.5, rely=0.8, anchor='n')
     self.widgets.append(self.choosePfpFrame)
 
 
     from lib.appdisplay import AppDisplay
-    selectPfpBtn = Button(self.choosePfpFrame, text= "Select Chosen Profile Picture", font=f'Arial 10', fg=highlight,
-                       bg=colour, relief="raised", command=lambda:self.setProfilePicture(self.selectedPfp, self.username), compound='top')
+    selectPfpBtn = Button(self.choosePfpFrame, text= "Select Chosen Profile Picture", font=f'Arial {smalltext}', fg=highlight,
+            bg=colour, relief="solid", command=lambda:self.setProfilePicture(self.selectedPfp, self.username), borderwidth=3)
     selectPfpBtn.pack(anchor='center')
     self.widgets.append(selectPfpBtn)
 
