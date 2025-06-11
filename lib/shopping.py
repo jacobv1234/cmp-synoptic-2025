@@ -4,7 +4,7 @@ from tkinter import Button, Label, Frame, Checkbutton, BooleanVar, PhotoImage, f
 from PIL import Image, ImageTk
 import io
 from urllib.request import urlopen
-from lib.databaseConnectionFront import getCurrentUserTP, getAllShopItems, getAllShopPrices
+from lib.databaseConnectionFront import getCurrentUserTP, getAllShopItems, getAllShopPrices, get_connection
 
 
 def draw_shopping_page(self):
@@ -88,6 +88,10 @@ def draw_shopping_page(self):
     self.shopItemNames = getAllShopItems()
     print(self.shopItemNames)
     self.shopItemPrice = getAllShopPrices()
+
+    self.shopimages = []
+    count = 0
+
     for i, j in zip(self.shopItemNames, self.shopItemPrice):
         checkItem = BooleanVar()
         self.itemInfo.append((checkItem, i, j))
@@ -99,6 +103,23 @@ def draw_shopping_page(self):
         
         checkbox.pack(side="top",anchor='nw')
         self.widgets.append(checkbox)
+
+        # get picture
+        data = (i,)
+        query = "SELECT itemPic FROM pointShop WHERE itemName = %s"
+        conn, cur = get_connection()
+        cur.execute(query, data)
+        picBinary = cur.fetchone()[0]
+        image_stream = io.BytesIO(picBinary)
+        pil_image = Image.open(image_stream)
+        pil_image = pil_image.resize((50, 50))
+        self.shopimages.append(ImageTk.PhotoImage(pil_image))
+
+        self.cobjects.append(
+            self.c.create_image(self.width*0.65, count*50 + self.height*0.1,image = self.shopimages[count], anchor = 'n')
+        )
+
+        count+=1
             
             #checkbox = Checkbutton(shopListFrame, text=f"{i,j}", variable=checkItem)
             #shopListLabel = Label(shopListFrame, text=f"{i,j}", font=('Arial', 14), bg='white')
