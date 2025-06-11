@@ -292,7 +292,8 @@ def draw_markers_page(self):
             map_widget.delete_all_marker()
             marker_type_var.set("")
             self.selected_coords = None
-            messagebox.showinfo("Success", "Marker added successfully!")
+            messagebox.showinfo("Success", "Marker added successfully!\nYou got 10 TP")
+            self.open_map()
         except Exception as e:
             conn.rollback()
             messagebox.showerror("Database Error", str(e))

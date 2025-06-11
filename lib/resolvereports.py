@@ -158,7 +158,7 @@ def show_marker_title(app_instance, marker_data):
                 WHERE garbageID = %s
             """, (image_bytes, app_instance.user_id, datetime.now(), marker_data['id']))
             conn.commit()
-            messagebox.showinfo("Success", "Marker resolved and image uploaded!")
+            messagebox.showinfo("Success", "Marker resolved and image uploaded!\nYou got 20 TP")
             app_instance.open_map()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to resolve marker: {str(e)}")
