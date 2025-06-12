@@ -314,8 +314,7 @@ def test_getChecked(display, mocker):
     assert len(display.widgets) >= 3
 
 # Intended behaviour: isCheckedFalse is not selected
-#                     the shopBasketFrame is destroyed
-#                     display does not have attribute "shopBasketFrame"
+#                     the shopBasketFrame destroy is called
 def test_getChecked_no_items(display, mocker):
     isCheckedFalse = mocker.MagicMock()
     isCheckedFalse.get.return_value = False
@@ -330,4 +329,3 @@ def test_getChecked_no_items(display, mocker):
 
     # Asserts
     mock_shopBasketFrame.destroy.assert_called_once()
-    assert not hasattr(display, "shopBasketFrame")

@@ -43,6 +43,13 @@ def test_draw_shopping_page(mocker, mock_self):
     # Patch ImageTk.PhotoImage to return a string
     mock_photoimage = mocker.patch('lib.shopping.ImageTk.PhotoImage', side_effect=lambda img: f"photoimage_{img}")
 
+    # Mock get_connection
+    mock_cursor = mocker.MagicMock()
+    mock_cursor.fetchone.return_value = (b"mock_image",)
+    mock_connection = mocker.MagicMock()
+    mock_connection.cursor.return_value = mock_cursor
+    mocker.patch("lib.shopping.get_connection", return_value=(mock_connection, mock_cursor))
+
     # Call draw_shopping_page
     shopping.draw_shopping_page(mock_self)
 
