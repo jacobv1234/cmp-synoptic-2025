@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Label, Button, filedialog, messagebox
+from tkinter import Label, Button, filedialog, messagebox, PhotoImage
 from PIL import Image, ImageTk, UnidentifiedImageError
 import io
 from urllib.request import urlopen
@@ -228,10 +228,10 @@ def show_marker_title(app_instance, marker_data):
         app_instance.addProfileImg = ImageTk.PhotoImage(app_instance.userProfilePicture)
 
 
-    except UnidentifiedImageError:
-        app_instance.addProfileImg = ImageTk.PhotoImage(width=200,height=150)
-        app_instance.addProfileImg.put((highlight,), to=(0, 0, 199, 149))
-        app_instance.addProfileImg.put((colour,), to=(2, 2, 197, 147))
+    except (UnidentifiedImageError, TypeError):
+        app_instance.addProfileImg = PhotoImage(width=50,height=50)
+        app_instance.addProfileImg.put((highlight,), to=(0, 0, 49, 49))
+        app_instance.addProfileImg.put((colour,), to=(2, 2, 47, 47))
     
     pfpLabel = Label(app_instance.window, image=app_instance.addProfileImg, bg=colour, fg=highlight)
     pfpLabel.place(relx=0.50, y=580, anchor="n")
