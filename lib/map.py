@@ -32,8 +32,8 @@ def open_map(self):
     self.map_widget.place(relx=0, rely=0, relwidth=1, relheight=1)
 
     # Configure map settings
-    self.map_widget.set_position(-26.2041, 28.0473) # Example coordinates for Johannesburg
-    self.map_widget.set_zoom(13)
+    self.map_widget.set_position(-26.1950, 28.0720)# Coordinates for Johannesburg - Maker's Valley
+    self.map_widget.set_zoom(15)
 
     # Function to darkern a color
     def darken_color(hex_color):

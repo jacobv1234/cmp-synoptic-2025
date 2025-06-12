@@ -211,8 +211,8 @@ def draw_markers_page(self):
     map_widget.grid(row=5, column=0, columnspan=4, pady=(0, 10), sticky="ew")
 
     # Set default position (Johannesburg)
-    map_widget.set_position(-26.2041, 28.0473)
-    map_widget.set_zoom(10)
+    map_widget.set_position(-26.1950, 28.0720)
+    map_widget.set_zoom(15)
 
     # Map click handler
     def map_click_event(coordinates_tuple):

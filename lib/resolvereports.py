@@ -1,10 +1,12 @@
 import tkinter as tk
 from tkinter import Label, Button, filedialog, messagebox
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, UnidentifiedImageError
 import io
 from urllib.request import urlopen
 from lib.databaseConnectionFront import get_connection
 from datetime import datetime
+from io import BytesIO 
+
 
 def show_marker_title(app_instance, marker_data):
     app_instance.clear_screen()
@@ -178,12 +180,13 @@ def show_marker_title(app_instance, marker_data):
     )
     resolve_btn.grid(row=2, column=0, columnspan=4, pady=(10, 10), sticky="ew")
     app_instance.widgets.append(resolve_btn)
+    
     userName = ""
     try:
         conn, cur = get_connection()
         cur.execute(
-            "SELECT garbageSubmittedBy FROM userGarbage WHERE userID1 = %s AND garbageID = %s",
-            (app_instance.user_id, marker_data['id'])
+            "SELECT garbageSubmittedBy FROM userGarbage WHERE garbageID = %s",
+            (marker_data['id'],)
         )
         result = cur.fetchone()[0]
         
@@ -194,7 +197,7 @@ def show_marker_title(app_instance, marker_data):
         if 'cur' in locals(): cur.close()
         if 'conn' in locals(): conn.close()
 
-    print(f"USERNAME: {userName}")
+    #print(f"USERNAME: {userName}")
     userSubmittedByLabel = Label(app_instance.window,
         text=f"Garbage Report Submitted by: {userName}",
         font=("Arial", 12, "bold"),
@@ -203,6 +206,36 @@ def show_marker_title(app_instance, marker_data):
     )
     userSubmittedByLabel.place(relx=0.50, y=550, anchor="n")
     app_instance.widgets.append(userSubmittedByLabel)
+
+    #little pfp next to username
+    Picresult = ""
+    try:
+        conn, cur = get_connection()
+        cur.execute(
+            "SELECT userPic FROM User WHERE username = %s",
+            (userName,)
+        )
+        Picresult = cur.fetchone()[0]
+        
+    except Exception as e:
+        print(f"Error fetching username: {e}")
+    finally:
+        if 'cur' in locals(): cur.close()
+        if 'conn' in locals(): conn.close()
+
+    try:
+        app_instance.userProfilePicture = Image.open(BytesIO(Picresult)).resize((80, 60))
+        app_instance.addProfileImg = ImageTk.PhotoImage(app_instance.userProfilePicture)
+
+
+    except UnidentifiedImageError:
+        app_instance.addProfileImg = ImageTk.PhotoImage(width=200,height=150)
+        app_instance.addProfileImg.put((highlight,), to=(0, 0, 199, 149))
+        app_instance.addProfileImg.put((colour,), to=(2, 2, 197, 147))
+    
+    pfpLabel = Label(app_instance.window, image=app_instance.addProfileImg, bg=colour, fg=highlight)
+    pfpLabel.place(relx=0.50, y=580, anchor="n")
+    app_instance.widgets.append(pfpLabel)
 
     # Bottom bar
     bottom_bar_height = 0.1 * app_instance.height
