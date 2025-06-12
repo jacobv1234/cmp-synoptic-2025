@@ -318,3 +318,19 @@ def updateProfilePicture(selectedPfpName, username):
         return 0
     finally:
         cur.close()
+
+def getUsername(userID):
+    conn, cur = get_connection()
+    try:
+        data = (userID,)
+        getAllItems = "SELECT username FROM User WHERE userID = %s"
+        cur.execute(getAllItems, data) #Need to keep data and Sql seperete to avoid sql injections
+        getUsername = cur.fetchone()[0]
+        return getUsername
+        
+    except mariadb.Error as e:
+        print({e})
+        return []
+    
+    finally:
+        cur.close()

@@ -178,6 +178,31 @@ def show_marker_title(app_instance, marker_data):
     )
     resolve_btn.grid(row=2, column=0, columnspan=4, pady=(10, 10), sticky="ew")
     app_instance.widgets.append(resolve_btn)
+    userName = ""
+    try:
+        conn, cur = get_connection()
+        cur.execute(
+            "SELECT garbageSubmittedBy FROM userGarbage WHERE userID1 = %s AND garbageID = %s",
+            (app_instance.user_id, marker_data['id'])
+        )
+        result = cur.fetchone()[0]
+        
+        userName = result
+    except Exception as e:
+        print(f"Error fetching username: {e}")
+    finally:
+        if 'cur' in locals(): cur.close()
+        if 'conn' in locals(): conn.close()
+
+    print(f"USERNAME: {userName}")
+    userSubmittedByLabel = Label(app_instance.window,
+        text=f"Garbage Report Submitted by: {userName}",
+        font=("Arial", 12, "bold"),
+        fg="#3b7f3b",
+        bg=colour
+    )
+    userSubmittedByLabel.place(relx=0.50, y=550, anchor="n")
+    app_instance.widgets.append(userSubmittedByLabel)
 
     # Bottom bar
     bottom_bar_height = 0.1 * app_instance.height

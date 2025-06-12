@@ -4,7 +4,7 @@ from urllib.request import urlopen
 import io
 import tkintermapview
 from datetime import datetime
-from lib.databaseConnectionFront import get_connection
+from lib.databaseConnectionFront import get_connection, getUsername
 
 
 # Function to create a marker with icons and indicators 
@@ -265,10 +265,11 @@ def draw_markers_page(self):
                 cur2.close()
 
         try:
+            getUsernameFromID = getUsername(self.user_id)
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             query = """INSERT INTO userGarbage 
-                    (garbageType, garbageCoord, userID1, garbagePic1, garbageDate1, garbageName)
-                    VALUES (%s, ST_GeomFromText(%s), %s, %s, %s, %s)"""
+                    (garbageType, garbageCoord, userID1, garbagePic1, garbageDate1, garbageName, garbageSubmittedBy)
+                    VALUES (%s, ST_GeomFromText(%s), %s, %s, %s, %s, %s)"""
             lat, lon = self.selected_coords
             gps_wkt = f'POINT({lon} {lat})'
             image_blob = None
@@ -281,7 +282,8 @@ def draw_markers_page(self):
                 self.user_id,
                 image_blob,
                 now,
-                title
+                title,
+                getUsernameFromID
             )
             conn, cur = get_connection()
             cur.execute(query, params)
